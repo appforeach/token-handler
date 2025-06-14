@@ -3,20 +3,19 @@ using System.Text.Json;
 using System.Security.Cryptography;
 using System.Web;
 using Microsoft.Extensions.Caching.Hybrid;
-using Poc.Yarp.Token_Handler;
-
+using Poc.Yarp.Token_Handler.Models;
 
 namespace Poc.Yarp.Token_Handler.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TokehHandlerController : ControllerBase
+public class TokenHandlerController : ControllerBase
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _config;
     private readonly HybridCache _cache;
 
-    public TokehHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache)
+    public TokenHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache)
     {
         _httpClientFactory = httpClientFactory;
         _config = config;
@@ -39,7 +38,7 @@ public class TokehHandlerController : ControllerBase
         var keycloakUrl = _config["Keycloak:Url"] ?? string.Empty;
         var realm = _config["Keycloak:Realm"] ?? string.Empty;
         var clientId = _config["Keycloak:ClientId"] ?? string.Empty;
-        var callback = redirectUri ?? _config["Keycloak:PkceRedirectUri"] ?? "http://localhost:5198/auth/callback";
+        var callback = redirectUri ?? _config["Keycloak:PkceRedirectUri"] ?? "http://localhost:5198/tokenhandler/callback";
 
         var query = HttpUtility.ParseQueryString(string.Empty);
         query["client_id"] = clientId;
@@ -59,8 +58,6 @@ public class TokehHandlerController : ControllerBase
     [HttpGet("callback")]
     public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state, [FromQuery] string? redirectUri = null)
     {
-        // Retrieve codeVerifier from session
-
         var codeVerifier = await _cache.GetOrDefautAsync($"pkce_{state}", default(string));
 
         if (string.IsNullOrEmpty(codeVerifier))
@@ -70,7 +67,7 @@ public class TokehHandlerController : ControllerBase
         var realm = _config["Keycloak:Realm"] ?? string.Empty;
         var clientId = _config["Keycloak:ClientId"] ?? string.Empty;
         var clientSecret = _config["Keycloak:ClientSecret"] ?? string.Empty;
-        var callbackUri = redirectUri ?? _config["Keycloak:PkceRedirectUri"] ?? "http://localhost:5198/auth/callback";
+        var callbackUri = redirectUri ?? _config["Keycloak:PkceRedirectUri"] ?? "http://localhost:5198/tokenhandler/callback";
 
         var client = _httpClientFactory.CreateClient();
         var tokenEndpoint = $"{keycloakUrl}/realms/{realm}/protocol/openid-connect/token";
@@ -90,12 +87,16 @@ public class TokehHandlerController : ControllerBase
             return Unauthorized();
 
         var json = await response.Content.ReadAsStringAsync();
-        var doc = JsonDocument.Parse(json);
-        var token = doc.RootElement.TryGetProperty("access_token", out var t) ? t.GetString() ?? string.Empty : string.Empty;
-        var sessionId = Guid.NewGuid().ToString();
-        if (!string.IsNullOrEmpty(token))
+
+        var tokenResponse = JsonSerializer.Deserialize<OAuthTokenResponse>(json, new JsonSerializerOptions
         {
-            await _cache.SetAsync(sessionId, token);
+            PropertyNameCaseInsensitive = true
+        });
+
+        var sessionId = Guid.NewGuid().ToString();
+        if (tokenResponse is not null)
+        {
+            await _cache.SetAsync(sessionId, tokenResponse);
 
             //TODO: discuss this;
             Response.Cookies.Append("session-id", sessionId, new CookieOptions { HttpOnly = false });

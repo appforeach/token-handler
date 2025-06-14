@@ -1,4 +1,5 @@
 using Microsoft.Extensions.Caching.Hybrid;
+using Poc.Yarp.Token_Handler.Models;
 
 namespace Poc.Yarp.Token_Handler.Middleware;
 
@@ -24,16 +25,10 @@ public class AuthenticationHeaderSubstitutionMiddleware
             {
                 var sessionToken = authentiationHeader.Substring("Bearer ".Length).Trim();
 
-                //TODO: persist some model
+                var tokenResponse = await _cache.GetOrDefautAsync<OAuthTokenResponse>(sessionToken, default);
 
-                var token = await _cache.GetOrCreateAsync<string>(
-                  sessionToken,
-                  factory: _ => ValueTask.FromResult(string.Empty), // Default factory method
-                  new HybridCacheEntryOptions() { Flags = HybridCacheEntryFlags.DisableUnderlyingData }
-                );
-
-                if (token is not null)
-                    context.Request.Headers[AuthenticationHeaderName] = $"Bearer {token}";
+                if (tokenResponse is not null)
+                    context.Request.Headers[AuthenticationHeaderName] = $"Bearer {tokenResponse.AccessToken}";
             }
         }
 
