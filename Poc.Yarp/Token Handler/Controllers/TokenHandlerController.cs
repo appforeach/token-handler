@@ -93,6 +93,8 @@ public class TokenHandlerController : ControllerBase
             PropertyNameCaseInsensitive = true
         });
 
+        tokenResponse.ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
+
         var sessionId = Guid.NewGuid().ToString();
         if (tokenResponse is not null)
         {

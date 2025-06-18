@@ -17,4 +17,7 @@ public class OAuthTokenResponse
     [JsonPropertyName("token_type")]
     public string TokenType { get; set; } = string.Empty;
     public string Scope { get; set; } = string.Empty;
+
+    //custom property to store the expiration time. Reconsider later.
+    public DateTimeOffset ExpiresAt { get; set; }
 }
