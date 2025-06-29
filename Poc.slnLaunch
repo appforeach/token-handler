@@ -1,0 +1,17 @@
+[
+  {
+    "Name": "api + yarp",
+    "Projects": [
+      {
+        "Path": "Poc.Api\\Poc.Api.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      },
+      {
+        "Path": "Poc.Yarp\\Poc.Yarp.csproj",
+        "Action": "Start",
+        "DebugTarget": "http"
+      }
+    ]
+  }
+]
