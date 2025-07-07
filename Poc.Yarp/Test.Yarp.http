@@ -1,0 +1,45 @@
+@Poc.Yarp_HostAddress = http://localhost:5198
+@Poc.KeyCloak_HostAddress = http://localhost:8080
+#@Poc.KeyCloak_TokenEndpoint = {{KeyCloak_HostAddress}}/realms/poc/protocol/openid-connect/token
+@Poc.KeyCloak_TokenEndpoint = http://localhost:8080/realms/poc/protocol/openid-connect/token
+
+
+### Get Client Credentials Grant Type from KeyCloak
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+  
+  grant_type=client_credentials&client_id=poc-api&client_secret=2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK
+
+###
+
+### Login to KeyCoak with Password Grant Type
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+  grant_type=password&client_id=poc-api&client_secret=2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK&username=artur.karbone@gmail.com&password=Deltron3030
+
+###
+
+
+### Login Via Yarp
+
+GET {{Poc.Yarp_HostAddress}}/tokenhandler/login/pkce
+Accept: application/json
+
+
+###
+
+
+
+GET {{Poc.Yarp_HostAddress}}/weatherforecast2/
+Accept: application/json
+
+
+
+###
+
+GET {{Poc.Yarp_HostAddress}}/weatherforecast3/
+Accept: application/json
+
+
+

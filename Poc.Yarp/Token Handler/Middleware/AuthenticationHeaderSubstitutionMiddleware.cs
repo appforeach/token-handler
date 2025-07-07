@@ -1,5 +1,7 @@
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Poc.Yarp.Token_Handler.Models;
+using System.IdentityModel.Tokens.Jwt;
 
 namespace Poc.Yarp.Token_Handler.Middleware;
 
@@ -28,20 +30,21 @@ public class AuthenticationHeaderSubstitutionMiddleware
             {
                 var sessionToken = authenticationHeader.Substring("Bearer ".Length).Trim();
 
-                var tokenResponse = await _cache.GetOrDefautAsync<OAuthTokenResponse>(sessionToken, default);
+                var tokenResponse = await _cache.GetOrDefautAsync<OpenIdConnectMessage>(sessionToken, default);
 
                 if (tokenResponse is not null)
                 {
+                    var handler = new JwtSecurityTokenHandler();
+                    var jwt = handler.ReadJwtToken(tokenResponse.AccessToken);
+                  
                     // Check if token is expired or about to expire (e.g., within 1 minute)
                     var now = DateTimeOffset.UtcNow;
-                    if (tokenResponse.ExpiresAt <= now.AddMinutes(4))
+                    if (jwt.ValidTo <= now.AddMinutes(1))
                     {
                         // Attempt to refresh the token
                         var refreshedToken = await RefreshTokenAsync(tokenResponse.RefreshToken);
                         if (refreshedToken is not null)
                         {
-                            tokenResponse = refreshedToken;
-                            // Update cache with new token
                             await _cache.SetAsync(sessionToken, tokenResponse, default);
                         }
                     }

@@ -9,10 +9,8 @@ function App() {
   
   const handleLogin = async () => {
     setLoginStatus('');
-    const formData = new FormData();
-    formData.append('username', 'artur.karbone@gmail.com'); // hardcoded for demo
-    formData.append('password', 'Deltron3030'); // hardcoded for demo
-    window.location.href = 'http://localhost:5198/tokenhandler/login/pkce';
+
+    window.location.href = 'http://localhost:5198/TokenHandlerControllerV2/authorize';
   };
 
     const handleWeather = async () => {
@@ -29,6 +27,7 @@ function App() {
         return;
       }
       const token = sessionId || cookieSessionId;
+      console.log('Using token:', token);
 
 
     // Call weather API with Bearer token

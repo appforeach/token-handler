@@ -22,8 +22,9 @@ public class TokenHandlerController : ControllerBase
         _cache = cache;
     }
 
-    [HttpGet("login/pkce")]
-    public async Task<IActionResult> LoginPkce([FromQuery] string? redirectUri = null)
+    // Init the PKCE flow
+    [HttpGet("authorize")]
+    public async Task<IActionResult> Authorize([FromQuery] string? redirectUri = null)
     {
         // Generate PKCE code verifier and challenge
         var codeVerifier = Base64UrlEncode(RandomNumberGenerator.GetBytes(32));
@@ -55,6 +56,7 @@ public class TokenHandlerController : ControllerBase
         return Redirect(authUrl);
     }
 
+    // Callback endpoint to handle the PKCE flow response
     [HttpGet("callback")]
     public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state, [FromQuery] string? redirectUri = null)
     {
