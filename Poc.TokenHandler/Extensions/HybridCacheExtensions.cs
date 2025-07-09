@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 
-namespace Poc.Yarp.Token_Handler;
-
+namespace Poc.TokenHandler.Extensions;
 public static class HybridCacheExtensions
 {
     public static async ValueTask<T?> GetOrDefautAsync<T>(this HybridCache cache, string key, T? defaultValue)
@@ -15,3 +14,4 @@ public static class HybridCacheExtensions
         return await cache.GetOrCreateAsync<T?>(key, factory: _ => ValueTask.FromResult(defaultValue), new HybridCacheEntryOptions { Flags = HybridCacheEntryFlags.DisableLocalCacheWrite | HybridCacheEntryFlags.DisableDistributedCacheWrite });
     }
 }
+

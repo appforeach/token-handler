@@ -1,7 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Poc.Yarp.Token_Handler.Models;
-
+namespace Poc.TokenHandler.Models;
 public class OAuthTokenResponse
 {
     [JsonPropertyName("access_token")]

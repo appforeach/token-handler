@@ -3,7 +3,8 @@ using System.Text.Json;
 using System.Security.Cryptography;
 using System.Web;
 using Microsoft.Extensions.Caching.Hybrid;
-using Poc.Yarp.Token_Handler.Models;
+using Poc.TokenHandler.Models;
+using Poc.TokenHandler.Extensions;
 
 namespace Poc.Yarp.Token_Handler.Controllers;
 

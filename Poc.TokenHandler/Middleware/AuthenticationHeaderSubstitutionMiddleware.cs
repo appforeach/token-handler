@@ -1,10 +1,12 @@
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
+using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Poc.Yarp.Token_Handler.Models;
+using Poc.TokenHandler.Extensions;
+using Poc.TokenHandler.Models;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Poc.Yarp.Token_Handler.Middleware;
-
+namespace Poc.TokenHandler.Middleware;
 public class AuthenticationHeaderSubstitutionMiddleware
 {
     private readonly RequestDelegate _next;
@@ -36,7 +38,7 @@ public class AuthenticationHeaderSubstitutionMiddleware
                 {
                     var handler = new JwtSecurityTokenHandler();
                     var jwt = handler.ReadJwtToken(tokenResponse.AccessToken);
-                  
+
                     // Check if token is expired or about to expire (e.g., within 1 minute)
                     var now = DateTimeOffset.UtcNow;
                     if (jwt.ValidTo <= now.AddMinutes(1))
