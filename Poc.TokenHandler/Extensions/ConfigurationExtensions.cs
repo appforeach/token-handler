@@ -11,8 +11,29 @@ using System.Diagnostics;
 namespace Poc.TokenHandler.Extensions;
 public static class ConfigurationExtensions
 {
-    public static IServiceCollection AddTokenHandler(this IServiceCollection services)
+    public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
     {
+        var tokenHandlerOptions = new TokenHandlerOptions
+        {
+            Authority = "http://localhost:8080/realms/poc",
+            ClientId = "poc-api",
+            ClientSecret = "2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK",
+            Realm = "poc"
+        };
+
+        if (overrideOptions is not null)
+        {
+            overrideOptions(tokenHandlerOptions);
+        }
+
+        services.Configure<TokenHandlerOptions>(options =>
+        {
+            options.Authority = tokenHandlerOptions.Authority;
+            options.ClientId = tokenHandlerOptions.ClientId;
+            options.ClientSecret = tokenHandlerOptions.ClientSecret;
+            options.Realm = tokenHandlerOptions.Realm;
+        });
+
         services.AddMemoryCache();
         services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
         services.AddHybridCache();
@@ -23,14 +44,15 @@ public static class ConfigurationExtensions
             options.DefaultScheme = "Cookies";
             options.DefaultChallengeScheme = "oidc";
         })
-        .AddCookie(options => {
+        .AddCookie(options =>
+        {
             options.LoginPath = "/Account/Login/";
         })
        .AddOpenIdConnect("oidc", options =>
        {
-           options.Authority = "http://localhost:8080/realms/poc";
-           options.ClientId = "poc-api";
-           options.ClientSecret = "2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK";
+           options.Authority = tokenHandlerOptions.Authority;
+           options.ClientId = tokenHandlerOptions.ClientId;
+           options.ClientSecret = tokenHandlerOptions.ClientSecret;
            options.ResponseType = OpenIdConnectResponseType.Code;
 
            options.SaveTokens = true;

@@ -15,7 +15,13 @@ internal class Program
             .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
         builder.Services.AddSession();
 
-        builder.Services.AddTokenHandler();
+        builder.Services.AddTokenHandler(options =>
+        {
+            options.Authority = builder.Configuration.GetValue<string>("Keycloak:Authority");
+            options.ClientId = builder.Configuration.GetValue<string>("Keycloak:ClientId");
+            options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret");
+            options.Realm = builder.Configuration.GetValue<string>("Keycloak:Realm");
+        });
 
         builder.Services.AddCors(options =>
         {
@@ -49,7 +55,7 @@ internal class Program
         app.UseRouting();
 
         app.UseTokenHandler();
-  
+
         app.MapControllers();
         app.MapReverseProxy();
 

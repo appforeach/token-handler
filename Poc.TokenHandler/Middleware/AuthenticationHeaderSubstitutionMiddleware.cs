@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
+using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Poc.TokenHandler.Extensions;
 using Poc.TokenHandler.Models;
@@ -12,14 +13,16 @@ public class AuthenticationHeaderSubstitutionMiddleware
     private readonly RequestDelegate _next;
     private readonly HybridCache _cache;
     private readonly IConfiguration _config;
+    private readonly TokenHandlerOptions _tokenHandlerOptions;
 
     const string AuthenticationHeaderName = "Authorization";
 
-    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IConfiguration config)
+    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IConfiguration config)
     {
         _next = next;
         _cache = cacheService;
         _config = config;
+        _tokenHandlerOptions = options.Value;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -41,17 +44,20 @@ public class AuthenticationHeaderSubstitutionMiddleware
 
                     // Check if token is expired or about to expire (e.g., within 1 minute)
                     var now = DateTimeOffset.UtcNow;
-                    if (jwt.ValidTo <= now.AddMinutes(1))
+                    if (jwt.ValidTo <= now.AddMinutes(4))
                     {
                         // Attempt to refresh the token
                         var refreshedToken = await RefreshTokenAsync(tokenResponse.RefreshToken);
                         if (refreshedToken is not null)
                         {
-                            await _cache.SetAsync(sessionToken, tokenResponse, default);
+                            await _cache.SetAsync(sessionToken, new OpenIdConnectMessage() { AccessToken = refreshedToken.AccessToken, RefreshToken = refreshedToken.RefreshToken }, default);
+                            context.Request.Headers[AuthenticationHeaderName] = $"Bearer {refreshedToken.AccessToken}";
                         }
                     }
-
-                    context.Request.Headers[AuthenticationHeaderName] = $"Bearer {tokenResponse.AccessToken}";
+                    else
+                    {
+                        context.Request.Headers[AuthenticationHeaderName] = $"Bearer {tokenResponse.AccessToken}";
+                    }
                 }
             }
         }
@@ -62,13 +68,7 @@ public class AuthenticationHeaderSubstitutionMiddleware
     // Assumes you have a method to refresh the token using the refresh token
     private async Task<OAuthTokenResponse?> RefreshTokenAsync(string refreshToken)
     {
-        var keycloakUrl = _config["Keycloak:Url"] ?? string.Empty;
-        var realm = _config["Keycloak:Realm"] ?? string.Empty;
-
-        var clientId = _config["Keycloak:ClientId"] ?? string.Empty;
-        var clientSecret = _config["Keycloak:ClientSecret"] ?? string.Empty;
-
-        var tokenEndpoint = $"{keycloakUrl}/realms/{realm}/protocol/openid-connect/token";
+        var tokenEndpoint = $"{_tokenHandlerOptions.Authority}/protocol/openid-connect/token";
 
         using var httpClient = new HttpClient();
         var request = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint)
@@ -77,8 +77,8 @@ public class AuthenticationHeaderSubstitutionMiddleware
             {
                 { "grant_type", "refresh_token" },
                 { "refresh_token", refreshToken },
-                { "client_id", clientId },
-                { "client_secret", clientSecret }
+                { "client_id", _tokenHandlerOptions.ClientId },
+                { "client_secret", _tokenHandlerOptions.ClientSecret }
             })
         };
 
