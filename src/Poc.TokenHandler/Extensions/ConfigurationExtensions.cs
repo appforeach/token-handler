@@ -13,13 +13,7 @@ public static class ConfigurationExtensions
 {
     public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
     {
-        var tokenHandlerOptions = new TokenHandlerOptions
-        {
-            Authority = "http://localhost:8080/realms/poc",
-            ClientId = "poc-api",
-            ClientSecret = "2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK",
-            Realm = "poc"
-        };
+        var tokenHandlerOptions = TokenHandlerOptions.Default;
 
         if (overrideOptions is not null)
         {
