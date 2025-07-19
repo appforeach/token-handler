@@ -1,11 +1,11 @@
 ﻿using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Poc.Yarp.Token_Handler.Controllers;
-
+namespace Poc.TokenHandler.Controllers;
 [ApiController]
 [Route("[controller]")]
-public class TokenHandlerControllerV2 : ControllerBase
+public class TokenHandlerController : ControllerBase
 {
     [Route("authorize")]
     public IActionResult Athorize(string returnUrl = "/")

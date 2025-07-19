@@ -10,7 +10,7 @@ function App() {
   const handleLogin = async () => {
     setLoginStatus('');
 
-    window.location.href = 'http://localhost:5198/TokenHandlerControllerV2/authorize';
+    window.location.href = 'http://localhost:5198/TokenHandler/authorize';
   };
 
     const handleWeather = async () => {

@@ -113,6 +113,10 @@ public static class ConfigurationExtensions
            };
        });
 
+        services.AddControllers()
+          .AddApplicationPart(typeof(Poc.TokenHandler.Controllers.TokenHandlerController).Assembly);
+
+
         return services;
     }
 

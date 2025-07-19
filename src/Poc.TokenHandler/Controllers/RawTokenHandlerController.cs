@@ -5,18 +5,21 @@ using System.Web;
 using Microsoft.Extensions.Caching.Hybrid;
 using Poc.TokenHandler.Models;
 using Poc.TokenHandler.Extensions;
+using Microsoft.Extensions.Configuration;
+using Microsoft.AspNetCore.Http;
 
 namespace Poc.Yarp.Token_Handler.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class TokenHandlerController : ControllerBase
+[Obsolete("This direct oauth callback handler approach was applied as a first draft")]
+public class RawTokenHandlerController : ControllerBase
 {
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _config;
     private readonly HybridCache _cache;
 
-    public TokenHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache)
+    public RawTokenHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache)
     {
         _httpClientFactory = httpClientFactory;
         _config = config;
