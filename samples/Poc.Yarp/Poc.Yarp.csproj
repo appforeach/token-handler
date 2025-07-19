@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\Poc.TokenHandler\Poc.TokenHandler.csproj" />
+    <ProjectReference Include="..\..\src\Poc.TokenHandler\Poc.TokenHandler.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,14 +3,12 @@
     "Name": "api + yarp",
     "Projects": [
       {
-        "Path": "Poc.Api\\Poc.Api.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Path": "samples\\Poc.Yarp\\Poc.Yarp.csproj",
+        "Action": "Start"
       },
       {
-        "Path": "Poc.Yarp\\Poc.Yarp.csproj",
-        "Action": "Start",
-        "DebugTarget": "http"
+        "Path": "samples\\Poc.Api\\Poc.Api.csproj",
+        "Action": "Start"
       }
     ]
   }
