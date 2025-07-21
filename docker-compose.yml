@@ -27,8 +27,8 @@ services:
 
   api:
     build:
-      context: .
-      dockerfile: Poc.Api/Dockerfile
+      context: ./samples/Poc.Api
+      dockerfile: Dockerfile
     ports:
       - "5001:8080"
     environment:
@@ -41,7 +41,7 @@ services:
   yarp:
     build:
       context: .
-      dockerfile: Poc.Yarp/Dockerfile
+      dockerfile: samples/Poc.Yarp/Dockerfile
     ports:
       - "5000:8080"
     environment:
@@ -49,28 +49,14 @@ services:
     depends_on:
       - api
 
-  # frontend:
-  #   build:
-  #     context: ./poc-frontend
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "3000:80"
-  #   depends_on:
-  #     - yarp
-
-  # auth-proxy:
-  #   build:
-  #     context: ./auth-proxy
-  #     dockerfile: Dockerfile
-  #   ports:
-  #     - "4000:4000"
-  #   environment:
-  #     - KEYCLOAK_URL=http://keycloak:8080
-  #     - KEYCLOAK_REALM=poc
-  #     - KEYCLOAK_CLIENT_ID=poc-api
-  #     - KEYCLOAK_CLIENT_SECRET=your-client-secret
-  #   depends_on:
-  #     - keycloak
+  frontend:
+    build:
+      context: ./samples/poc-frontend
+      dockerfile: Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      - yarp
 
 volumes:
   postgres_data:

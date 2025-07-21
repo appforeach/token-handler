@@ -16,6 +16,7 @@ This is a proof of concept application that demonstrates the integration of:
 
 1. Start the application:
 ```bash
+docker-compose build
 docker-compose up -d
 ```
 
@@ -75,7 +76,12 @@ Copy the "Client secret" - you'll need this for the API configuration
 
 ### Backend
 ```bash
-cd Poc.Api
+cd samples\Poc.Api
+dotnet run
+```
+### Yarp
+```bash
+cd samples\Poc.Api
 dotnet run
 ```
 
