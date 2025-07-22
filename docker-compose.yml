@@ -30,11 +30,11 @@ services:
       context: ./samples/Poc.Api
       dockerfile: Dockerfile
     ports:
-      - "5001:8080"
+      - "5149:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
       - Keycloak__Authority=http://keycloak:8080/realms/poc
-      - Keycloak__Audience=poc-api
+      - Keycloak__Audience=account
     depends_on:
       - keycloak
 
@@ -43,9 +43,14 @@ services:
       context: .
       dockerfile: samples/Poc.Yarp/Dockerfile
     ports:
-      - "5000:8080"
+      - "5198:8080"
     environment:
       - ASPNETCORE_ENVIRONMENT=Development
+      - Keycloak__Authority=http://keycloak:8080/realms/poc
+      - Keycloak__Url=http://keycloak:8080
+      - Keycloak__Audience=account
+      - FrontEnd__RedirectAfterLogin=http://frontend:3000
+      - ReverseProxy__Clusters__apiCluster__Destinations__destination1__Address=http://api:8080
     depends_on:
       - api
 
@@ -54,7 +59,7 @@ services:
       context: ./samples/poc-frontend
       dockerfile: Dockerfile
     ports:
-      - "3000:3000"
+      - "3000:80"
     depends_on:
       - yarp
 
