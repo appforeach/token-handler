@@ -20,19 +20,22 @@ function App() {
         return match ? match[2] : null;
       };
       // Ensure fetch sends cookies (including HttpOnly session-id) by setting credentials: 'include'
-      const cookieSessionId = getCookie('session-id');
+      // const cookieSessionId = getCookie('session-id');
 
-      if (!sessionId && !cookieSessionId) {
-        setWeather('No session. Please login first.');
-        return;
-      }
-      const token = sessionId || cookieSessionId;
-      console.log('Using token:', token);
+      // debugger;
+
+      // if (!sessionId && !cookieSessionId) {
+      //   setWeather('No session. Please login first.');
+      //   return;
+      // }
+      // const token = sessionId || cookieSessionId;
+      // console.log('Using token:', token);
 
 
     // Call weather API with Bearer token
     const weatherResp = await fetch('http://localhost:5198/weatherforecast', {
-      headers: { Authorization: `Bearer ${token}` },
+      // headers: { Authorization: `Bearer ${token}` },
+      credentials: 'include', // This ensures browser cookies are sent
     });
     if (!weatherResp.ok) {
       setWeather('Weather API call failed.');

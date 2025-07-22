@@ -27,37 +27,36 @@ public class AuthenticationHeaderSubstitutionMiddleware
 
     public async Task InvokeAsync(HttpContext context)
     {
-        if (context.Request.Headers.ContainsKey(AuthenticationHeaderName))
+        if (context.Request.Headers.ContainsKey(AuthenticationHeaderName) || context.Request.Cookies.ContainsKey(Extensions.ConfigurationExtensions.AuthenticationCookieName))
         {
             var authenticationHeader = context.Request.Headers[AuthenticationHeaderName].ToString();
 
-            if (authenticationHeader.StartsWith("Bearer"))
+            var sessionToken = authenticationHeader.StartsWith("Bearer") ?
+                authenticationHeader.Substring("Bearer ".Length).Trim() :
+                context.Request.Cookies[Extensions.ConfigurationExtensions.AuthenticationCookieName];
+
+            var tokenResponse = await _cache.GetOrDefautAsync<OpenIdConnectMessage>(sessionToken, default);
+
+            if (tokenResponse is not null)
             {
-                var sessionToken = authenticationHeader.Substring("Bearer ".Length).Trim();
+                var handler = new JwtSecurityTokenHandler();
+                var jwt = handler.ReadJwtToken(tokenResponse.AccessToken);
 
-                var tokenResponse = await _cache.GetOrDefautAsync<OpenIdConnectMessage>(sessionToken, default);
-
-                if (tokenResponse is not null)
+                // Check if token is expired or about to expire (e.g., within 1 minute)
+                var now = DateTimeOffset.UtcNow;
+                if (jwt.ValidTo <= now.AddMinutes(4))
                 {
-                    var handler = new JwtSecurityTokenHandler();
-                    var jwt = handler.ReadJwtToken(tokenResponse.AccessToken);
-
-                    // Check if token is expired or about to expire (e.g., within 1 minute)
-                    var now = DateTimeOffset.UtcNow;
-                    if (jwt.ValidTo <= now.AddMinutes(4))
+                    // Attempt to refresh the token
+                    var refreshedToken = await RefreshTokenAsync(tokenResponse.RefreshToken);
+                    if (refreshedToken is not null)
                     {
-                        // Attempt to refresh the token
-                        var refreshedToken = await RefreshTokenAsync(tokenResponse.RefreshToken);
-                        if (refreshedToken is not null)
-                        {
-                            await _cache.SetAsync(sessionToken, new OpenIdConnectMessage() { AccessToken = refreshedToken.AccessToken, RefreshToken = refreshedToken.RefreshToken }, default);
-                            context.Request.Headers[AuthenticationHeaderName] = $"Bearer {refreshedToken.AccessToken}";
-                        }
+                        await _cache.SetAsync(sessionToken, new OpenIdConnectMessage() { AccessToken = refreshedToken.AccessToken, RefreshToken = refreshedToken.RefreshToken }, default);
+                        context.Request.Headers[AuthenticationHeaderName] = $"Bearer {refreshedToken.AccessToken}";
                     }
-                    else
-                    {
-                        context.Request.Headers[AuthenticationHeaderName] = $"Bearer {tokenResponse.AccessToken}";
-                    }
+                }
+                else
+                {
+                    context.Request.Headers[AuthenticationHeaderName] = $"Bearer {tokenResponse.AccessToken}";
                 }
             }
         }

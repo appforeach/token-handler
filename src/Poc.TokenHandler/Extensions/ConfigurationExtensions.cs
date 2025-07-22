@@ -11,6 +11,7 @@ using System.Diagnostics;
 namespace Poc.TokenHandler.Extensions;
 public static class ConfigurationExtensions
 {
+    public static string AuthenticationCookieName = "session-id";
     public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
     {
         var tokenHandlerOptions = TokenHandlerOptions.Default;
@@ -92,12 +93,12 @@ public static class ConfigurationExtensions
                    await hybridCache.SetAsync(sessionId, context.TokenEndpointResponse);
 
                    var httpContext = context.HttpContext;
-                   httpContext.Response.Cookies.Append("session-id", sessionId, new CookieOptions
+                   httpContext.Response.Cookies.Append(AuthenticationCookieName, sessionId, new CookieOptions
                    {
-                       HttpOnly = !true, //dev
-                                         // Secure = true, //dev
-                                         // SameSite = SameSiteMode.Strict,
-                                         // Expires = DateTimeOffset.UtcNow.AddHours(1)
+                        HttpOnly = true, 
+                        Secure = true, 
+                        // SameSite = SameSiteMode.Strict,
+                        // Expires = DateTimeOffset.UtcNow.AddHours(1)
                    });
 
 
