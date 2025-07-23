@@ -71,6 +71,10 @@ Copy the "Client secret" - you'll need this for the API configuration
    - Frontend: http://localhost:3000
    - API: http://localhost:5000/api
    - Keycloak: http://localhost:8080
+	- 
+4. Add keycloak host name to the hosts file
+
+127.0.0.1 keycloak #this is needed for internal communication with keycloack within docker compose
 
 ## Development
 
@@ -81,13 +85,13 @@ dotnet run
 ```
 ### Yarp
 ```bash
-cd samples\Poc.Api
+cd samples\Poc.Yarp
 dotnet run
 ```
 
 ### Frontend
 ```bash
-cd poc-frontend
+cd samples\poc-frontend
 npm install
 npm run dev
 ```
@@ -95,7 +99,7 @@ npm run dev
 ## Architecture
 
 - Frontend (React + TypeScript) runs on port 3000
-- YARP reverse proxy runs on port 5000
-- Backend API runs on port 80 (internal)
+- YARP reverse proxy runs on port 5198
+- Backend API runs on port 8080 (internal) 
 - Keycloak runs on port 8080
 - PostgreSQL runs on port 5432 (internal) 
