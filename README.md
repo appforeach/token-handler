@@ -34,8 +34,7 @@ Where
 - .NET 9.0 SDK
 - Node.js 16
 
-- 
-## Setup Instructions
+## Setup Instructions (TODO: clean up this section)
 
 1. Start the application:
 ```bash
