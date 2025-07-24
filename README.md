@@ -2,9 +2,31 @@
 
 This is a proof of concept application that demonstrates the integration of:
 - ASP.NET Core Web API with Keycloak authentication
+- Keycloak for identity and access management
 - YARP reverse proxy
-- React frontend
+- React minimalistic frontend
 - Docker Compose setup
+
+## Usage in YAPP projects
+
+In Program.CS of your YAPP project, you can add the token handler as follows:
+
+```csharp
+  builder.Services.AddTokenHandler(options =>
+        {
+            options.Authority = builder.Configuration.GetValue<string>("Keycloak:Authority");
+            options.ClientId = builder.Configuration.GetValue<string>("Keycloak:ClientId");
+            options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret");
+            options.Realm = builder.Configuration.GetValue<string>("Keycloak:Realm");
+        });
+```
+
+Where
+- Authority is a URL to your Keycloak instance (for instance http://localhost:8080/realms/poc), 
+- ClientId is the ID of your Keycloak client
+- ClientSecret is the secret of your Keycloak client
+- Realm is the name of your Keycloak realm.
+
 
 ## Prerequisites
 
@@ -12,6 +34,7 @@ This is a proof of concept application that demonstrates the integration of:
 - .NET 9.0 SDK
 - Node.js 16
 
+- 
 ## Setup Instructions
 
 1. Start the application:
@@ -103,3 +126,5 @@ npm run dev
 - Backend API runs on port 8080 (internal) 
 - Keycloak runs on port 8080
 - PostgreSQL runs on port 5432 (internal) 
+
+
