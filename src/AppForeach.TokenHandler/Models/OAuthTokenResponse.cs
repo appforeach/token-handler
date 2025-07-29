@@ -1,6 +1,6 @@
 ﻿using System.Text.Json.Serialization;
 
-namespace Poc.TokenHandler.Models;
+namespace AppForeach.TokenHandler.Models;
 public class OAuthTokenResponse
 {
     [JsonPropertyName("access_token")]

@@ -2,7 +2,7 @@
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
-namespace Poc.TokenHandler.Controllers;
+namespace AppForeach.TokenHandler.Controllers;
 [ApiController]
 [Route("[controller]")]
 public class TokenHandlerController : ControllerBase

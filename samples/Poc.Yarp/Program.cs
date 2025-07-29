@@ -1,4 +1,4 @@
-using Poc.TokenHandler.Extensions;
+using AppForeach.TokenHandler.Extensions;
 
 internal class Program
 {

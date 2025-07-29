@@ -15,7 +15,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\Poc.TokenHandler\Poc.TokenHandler.csproj" />
+    <ProjectReference Include="..\..\src\AppForeach.TokenHandler\AppForeach.TokenHandler.csproj" />
   </ItemGroup>
 
 </Project>

@@ -3,12 +3,12 @@ using System.Text.Json;
 using System.Security.Cryptography;
 using System.Web;
 using Microsoft.Extensions.Caching.Hybrid;
-using Poc.TokenHandler.Models;
-using Poc.TokenHandler.Extensions;
 using Microsoft.Extensions.Configuration;
 using Microsoft.AspNetCore.Http;
+using AppForeach.TokenHandler.Models;
+using AppForeach.TokenHandler.Extensions;
 
-namespace Poc.Yarp.Token_Handler.Controllers;
+namespace AppForeach.TokenHandler.Controllers;
 
 [ApiController]
 [Route("[controller]")]

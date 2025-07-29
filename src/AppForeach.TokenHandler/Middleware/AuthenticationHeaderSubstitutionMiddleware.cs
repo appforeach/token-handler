@@ -1,13 +1,13 @@
-﻿using Microsoft.AspNetCore.Http;
+﻿using AppForeach.TokenHandler.Extensions;
+using AppForeach.TokenHandler.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using Poc.TokenHandler.Extensions;
-using Poc.TokenHandler.Models;
 using System.IdentityModel.Tokens.Jwt;
 
-namespace Poc.TokenHandler.Middleware;
+namespace AppForeach.TokenHandler.Middleware;
 public class AuthenticationHeaderSubstitutionMiddleware
 {
     private readonly RequestDelegate _next;

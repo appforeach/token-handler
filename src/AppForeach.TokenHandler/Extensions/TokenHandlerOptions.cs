@@ -1,4 +1,4 @@
-﻿namespace Poc.TokenHandler.Extensions;
+﻿namespace AppForeach.TokenHandler.Extensions;
 public class TokenHandlerOptions
 {
     public string Authority { get; set; }

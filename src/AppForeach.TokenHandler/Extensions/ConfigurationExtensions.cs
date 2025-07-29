@@ -1,14 +1,15 @@
-﻿using Microsoft.AspNetCore.Authentication.OpenIdConnect;
+﻿using AppForeach.TokenHandler.Controllers;
+using AppForeach.TokenHandler.Middleware;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using Poc.TokenHandler.Middleware;
 using System.Diagnostics;
 
-namespace Poc.TokenHandler.Extensions;
+namespace AppForeach.TokenHandler.Extensions;
 public static class ConfigurationExtensions
 {
     public static string AuthenticationCookieName = "session-id";
@@ -115,7 +116,7 @@ public static class ConfigurationExtensions
        });
 
         services.AddControllers()
-          .AddApplicationPart(typeof(Poc.TokenHandler.Controllers.TokenHandlerController).Assembly);
+          .AddApplicationPart(typeof(TokenHandlerController).Assembly);
 
 
         return services;
