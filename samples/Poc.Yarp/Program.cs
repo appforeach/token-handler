@@ -1,4 +1,6 @@
 using AppForeach.TokenHandler.Extensions;
+using Poc.Yarp;
+using Yarp.ReverseProxy.Transforms;
 
 internal class Program
 {
@@ -12,7 +14,16 @@ internal class Program
         builder.Services.AddControllers();
         builder.Services.AddHttpClient();
         builder.Services.AddReverseProxy()
-            .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"));
+            .LoadFromConfig(builder.Configuration.GetSection("ReverseProxy"))
+             .AddTransforms(builderContext =>
+             {
+                 builderContext.AddRequestTransform(async transformContext =>
+                 {
+                     var tokenExchangeTransform = transformContext.HttpContext.RequestServices
+                         .GetRequiredService<TokenExchangeTransform>();
+                     await tokenExchangeTransform.ApplyAsync(transformContext);
+                 });
+             });
         builder.Services.AddSession();
 
         builder.Services.AddTokenHandler(options =>
@@ -22,6 +33,8 @@ internal class Program
             options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret");
             options.Realm = builder.Configuration.GetValue<string>("Keycloak:Realm");
         });
+
+        builder.Services.AddScoped<TokenExchangeTransform>();
 
         builder.Services.AddCors(options =>
         {

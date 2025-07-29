@@ -1,6 +1,6 @@
 [
   {
-    "Name": "api + yarp",
+    "Name": "api + internal api + yarp + background worker",
     "Projects": [
       {
         "Path": "samples\\Poc.Yarp\\Poc.Yarp.csproj",
@@ -8,6 +8,14 @@
       },
       {
         "Path": "samples\\Poc.Api\\Poc.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Poc.InternalApi\\Poc.InternalApi.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Poc.BackgroundWorker\\Poc.BackgroundWorker.csproj",
         "Action": "Start"
       }
     ]
