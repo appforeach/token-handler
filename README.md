@@ -1,4 +1,4 @@
-# POC Application
+# Sample Application
 
 This is a proof of concept application that demonstrates the integration of:
 - ASP.NET Core Web API with Keycloak authentication
