@@ -1,7 +1,7 @@
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 COPY samples/Poc.Yarp/Poc.Yarp.csproj Poc.Yarp/
-COPY src/Poc.TokenHandler ./Poc.TokenHandler
+COPY src/AppForeach.TokenHandler ./AppForeach.TokenHandler
 RUN dotnet restore "Poc.Yarp/Poc.Yarp.csproj"
 COPY samples/Poc.Yarp/. Poc.Yarp/
 WORKDIR "/src/Poc.Yarp"
