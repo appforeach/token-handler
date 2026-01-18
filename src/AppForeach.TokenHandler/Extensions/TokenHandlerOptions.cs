@@ -10,7 +10,7 @@ public class TokenHandlerOptions
     {
         Authority = "http://localhost:8080/realms/poc",
         ClientId = "poc-api",
-        ClientSecret = "2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK",
+        ClientSecret = "your-client-secret-here",
         Realm = "poc"
     };
 }
