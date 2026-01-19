@@ -68,7 +68,7 @@ docker-compose up -d
    - Keycloak: http://localhost:8080
 4. Add keycloak host name to the hosts file
 
-127.0.0.1 keycloak #this is needed for internal communication with keycloack within docker compose
+127.0.0.1 keycloak #this is needed for internal communication with keycloak within docker compose
 
 
 5. Shut down the application:

@@ -11,13 +11,13 @@ Content-Type: application/x-www-form-urlencoded
 
 ###
 
-### Login to KeyCoak with Password Grant Type as an admin user
+### Login to KeyCloak with Password Grant Type as an admin user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
   grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=admin@example.com&password=admin123
 
 
-### Login to KeyCoak with Password Grant Type a regular user
+### Login to KeyCloak with Password Grant Type a regular user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
   grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=test@example.com&password=test123
