@@ -1,6 +1,5 @@
 @Poc.Yarp_HostAddress = http://localhost:5198
 @Poc.KeyCloak_HostAddress = http://localhost:8080
-#@Poc.KeyCloak_TokenEndpoint = {{KeyCloak_HostAddress}}/realms/poc/protocol/openid-connect/token
 @Poc.KeyCloak_TokenEndpoint = http://localhost:8080/realms/poc/protocol/openid-connect/token
 
 
@@ -8,17 +7,20 @@
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
   
-  grant_type=client_credentials&client_id=poc-api&client_secret=2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK
+  grant_type=client_credentials&client_id=poc-api&client_secret=your-client-secret-here
 
 ###
 
-### Login to KeyCoak with Password Grant Type
+### Login to KeyCloak with Password Grant Type as an admin user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
+  grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=admin@example.com&password=admin123
 
-  grant_type=password&client_id=poc-api&client_secret=2ISb8zFHUU4Q5XZDd2xRN4LpkjMPz2mK&username=artur.karbone@gmail.com&password=Deltron3030
 
-###
+### Login to KeyCloak with Password Grant Type a regular user
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+  grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=test@example.com&password=test123
 
 
 ### Login Via Yarp
@@ -27,19 +29,15 @@ GET {{Poc.Yarp_HostAddress}}/tokenhandler/login/pkce
 Accept: application/json
 
 
-###
+### Call Weather Forecast API via Yarp
 
-
-
-GET {{Poc.Yarp_HostAddress}}/weatherforecast2/
+GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
 
 
 
-###
+### Call Weather Forecast API via Yarp
 
-GET {{Poc.Yarp_HostAddress}}/weatherforecast3/
+GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
-
-
 

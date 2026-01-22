@@ -23,6 +23,13 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poc.Api", "samples\Poc.Api\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AppForeach.TokenHandler", "src\AppForeach.TokenHandler\AppForeach.TokenHandler.csproj", "{FF98C36D-7EF6-4B83-9DA5-62136EB090A7}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".keycloak", ".keycloak", "{04279663-B7B0-4DDA-890E-00941C396195}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "realms", "realms", "{1B8C585A-FD09-47B5-B2E4-948FD5C12D02}"
+	ProjectSection(SolutionItems) = preProject
+		.keycloak\realms\poc-realm.json = .keycloak\realms\poc-realm.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -49,6 +56,8 @@ Global
 		{C405340E-D243-488E-2468-5DAD5415539D} = {18EAE7C8-2D17-47F8-84F8-A4DCD4635292}
 		{EDDA50FE-18EE-B32B-63F0-6DCFD6F0ED5D} = {18EAE7C8-2D17-47F8-84F8-A4DCD4635292}
 		{FF98C36D-7EF6-4B83-9DA5-62136EB090A7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{04279663-B7B0-4DDA-890E-00941C396195} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
+		{1B8C585A-FD09-47B5-B2E4-948FD5C12D02} = {04279663-B7B0-4DDA-890E-00941C396195}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20CBA6E6-E25F-454F-ACD1-D7EBD635B2B3}

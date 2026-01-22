@@ -43,20 +43,21 @@ docker-compose up -d
 ```
 
 2. Access Keycloak at http://localhost:8080
-   - Login with admin/admin
-   - Create a new realm named "poc"
-   - Create a new client within this realm:
-     - Client ID: poc-api
-     - Client Protocol: openid-connect
-     - Valid Redirect URIs: http://localhost:3000/*
-     - Web Origins: http://localhost:3000
-   - Create a new user:
-     - Username: test
-     - Email: test@example.com
-     - Password: test123
-     - Password not temporary
-     - Email Verified: true
-    - Get the client secret - needed for the API configuration
+   - Realm "poc" is already created with a client and a user for testing purposes. See the file `.keycloak/realms/poc-realm.json`.
+   - If you want to set it up manually, follow these steps:
+   	- Create a new realm named "poc"
+   	- Create a new client within this realm:
+    	 - Client ID: poc-api
+    	 - Client Protocol: openid-connect
+    	 - Valid Redirect URIs: http://localhost:3000/*
+    	 - Web Origins: http://localhost:3000
+   	- Create a new user:
+    	 - Username: test
+    	 - Email: test@example.com
+    	 - Password: test123
+    	 - Password not temporary
+    	 - Email Verified: true
+    	- Get the client secret - needed for the API configuration
       - poc-api client
       - Credentials tab
       - Copy the "Client secret"
@@ -67,7 +68,14 @@ docker-compose up -d
    - Keycloak: http://localhost:8080
 4. Add keycloak host name to the hosts file
 
-127.0.0.1 keycloak #this is needed for internal communication with keycloack within docker compose
+127.0.0.1 keycloak #this is needed for internal communication with keycloak within docker compose
+
+
+5. Shut down the application:
+```bash
+docker-compose down
+docker-compose down -v (to remove volumes)
+```
 
 ## Development
 
