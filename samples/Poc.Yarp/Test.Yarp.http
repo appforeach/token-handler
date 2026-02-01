@@ -41,3 +41,67 @@ Accept: application/json
 GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
 
+
+
+### Token Exchange - RFC 8693
+@existingAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ4OGs5OXpJSndBVER6cWZObkdoYXFNcHpaSzJxRGUxSzRybTBubDd5T0hZIn0.eyJleHAiOjE3NjkwODk3NTYsImlhdCI6MTc2OTA4OTQ1NiwianRpIjoib25ydHJvOjA4YzI4ZjNjLWMyZDctY2RlNC1mZjlkLTY0MmI3NWNlMWNiMyIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwic3ViIjoiNGY4YTJlN2MtOWYyZi00ODQ4LWE5NDEtNmU1OWJhNDYyNmYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicG9jLWFwaSIsInNpZCI6Im5ZMGxOV2h2NjRKVDBjMkRjb2lfbFBVZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo1MTk4IiwiaHR0cDovL2xvY2FsaG9zdDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQWRtaW4gVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSJ9.Cke-HzuXGUMRW10-ANFZlf8WZ4Y0zyk2cfJYRBToShtR9scnldmxzgPgm1g2OXzAYoZ3s3GgJCDc1Rbpr9UCqIfvw7Q2zLRc9wi4nP5fDLyPxrVIiH885u_QyuXxN1RIzjIiDHkbRMQ3ydv4068nwnJLhECrwAFCEYcLjmB8_fmADP8IJaRe5PYQ8N2dhTiBbo8YMpLrGyYS8oQBrDt66MSNn9X2pp4CJfXIMgaS_yMsM_oGRG1Wah7CNvXr0ExDyBGdA96MjOlpGStN1fUjt04h3WiwW5b-3VQWychGyUY8KzLsGYxcMzLCq7nfZha0d3FchmxLXwXoByw6KwiCMg
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+&client_id=poc-api
+&client_secret=your-client-secret-here
+&subject_token={{existingAccessToken}}
+&subject_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_token_type=urn:ietf:params:oauth:token-type:access_token
+&audience=target-audience 
+
+
+
+
+@admin-access-token = <paste-admin-token-here>
+@target-user-id = test@example.com
+
+### Token Exchange - Impersonation (Admin impersonates regular user)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+&client_id=poc-api
+&client_secret=your-client-secret-here
+&subject_token={{admin-access-token}}
+&subject_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_subject={{target-user-id}}
+
+###
+
+### Token Exchange - Impersonation with Audience (for specific microservice)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+&client_id=poc-api
+&client_secret=your-client-secret-here
+&subject_token={{admin-access-token}}
+&subject_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_subject={{target-user-id}}
+&audience=weather-api
+
+###
+
+@service-token = <paste-service-token-here>
+
+### Token Exchange - Service-to-User Impersonation (Service acts on behalf of user)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange
+&client_id=poc-api
+&client_secret=your-client-secret-here
+&subject_token={{service-token}}
+&subject_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_token_type=urn:ietf:params:oauth:token-type:access_token
+&requested_subject={{target-user-id}}
+&audience=downstream-service

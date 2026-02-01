@@ -26,15 +26,20 @@
       ],
       "standardFlowEnabled": true,
       "directAccessGrantsEnabled": true,
-      "serviceAccountsEnabled": true
+      "serviceAccountsEnabled": true,
+      "attributes": {
+        "token.exchange.grant.enabled": "true",
+        "access.token.lifespan": "300",
+        "client.secret.creation.time": "1234567890"
+      }
     },
     {
       "clientId": "account",
       "enabled": true,
       "publicClient": true,
       "protocol": "openid-connect",
-      "redirectUris": ["http://localhost:3000/*"],
-      "webOrigins": ["http://localhost:3000"]
+      "redirectUris": [ "http://localhost:3000/*" ],
+      "webOrigins": [ "http://localhost:3000" ]
     }
   ],
   "users": [
@@ -52,9 +57,14 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["user"],
+      "realmRoles": [ "user" ],
       "clientRoles": {
-        "account": ["manage-account", "view-profile"]
+        "account": [ "manage-account", "view-profile" ],
+        "realm-management": [
+          "impersonation",
+          "manage-users",
+          "view-users"
+        ]
       }
     },
     {
@@ -71,7 +81,7 @@
           "temporary": false
         }
       ],
-      "realmRoles": ["admin", "user"]
+      "realmRoles": [ "admin", "user" ]
     }
   ],
   "roles": {
