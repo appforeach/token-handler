@@ -30,6 +30,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "realms", "realms", "{1B8C58
 		.keycloak\realms\poc-realm.json = .keycloak\realms\poc-realm.json
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backup", "backup", "{12B7FE65-067B-4303-9CAA-C3DB32BCFA07}"
+	ProjectSection(SolutionItems) = preProject
+		.keycloak\backup\poc-realm-experimental-old.json = .keycloak\backup\poc-realm-experimental-old.json
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -58,6 +63,7 @@ Global
 		{FF98C36D-7EF6-4B83-9DA5-62136EB090A7} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{04279663-B7B0-4DDA-890E-00941C396195} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{1B8C585A-FD09-47B5-B2E4-948FD5C12D02} = {04279663-B7B0-4DDA-890E-00941C396195}
+		{12B7FE65-067B-4303-9CAA-C3DB32BCFA07} = {04279663-B7B0-4DDA-890E-00941C396195}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20CBA6E6-E25F-454F-ACD1-D7EBD635B2B3}
