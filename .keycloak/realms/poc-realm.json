@@ -8,9 +8,11 @@
   "resetPasswordAllowed": true,
   "editUsernameAllowed": false,
   "bruteForceProtected": true,
+  "browserFlow": "browser",
+  "directGrantFlow": "direct grant",
   "clients": [
     {
-      "clientId": "poc-api",
+      "clientId": "api",
       "enabled": true,
       "clientAuthenticatorType": "client-secret",
       "secret": "your-client-secret-here",
@@ -25,12 +27,14 @@
         "http://localhost:5198"
       ],
       "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "authorizationServicesEnabled": true,
       "attributes": {
         "access.token.lifespan": "600",
-        "client.secret.creation.time": "1234567890"
+        "client.secret.creation.time": "1234567890",
+        "oauth2.token.exchange.grant.enabled": "true"
       },
       "protocolMappers": [
         {
@@ -62,12 +66,14 @@
         "http://localhost:5198"
       ],
       "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
       "authorizationServicesEnabled": true,
       "attributes": {
         "access.token.lifespan": "600",
-        "client.secret.creation.time": "1234567890"
+        "client.secret.creation.time": "1234567890",
+        "oauth2.token.exchange.grant.enabled": "true"
       },
       "protocolMappers": [
         {
@@ -89,7 +95,13 @@
       "publicClient": true,
       "protocol": "openid-connect",
       "redirectUris": [ "http://localhost:3000/*" ],
-      "webOrigins": [ "http://localhost:3000" ]
+      "webOrigins": [ "http://localhost:3000" ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "oauth2.token.exchange.grant.enabled": "true"
+      }
     }
   ],
   "users": [
