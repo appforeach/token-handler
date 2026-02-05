@@ -7,101 +7,123 @@
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
   
-  grant_type=client_credentials&client_id=poc-api&client_secret=your-client-secret-here
+grant_type=client_credentials&client_id=bff&client_secret=your-client-secret-here
 
 ###
 
 ### Login to KeyCloak with Password Grant Type as an admin user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
-  grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=admin@example.com&password=admin123
 
+grant_type=password&client_id=bff&client_secret=your-client-secret-here&username=admin@example.com&password=admin123
+
+###
 
 ### Login to KeyCloak with Password Grant Type a regular user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
-  grant_type=password&client_id=poc-api&client_secret=your-client-secret-here&username=test@example.com&password=test123
 
+grant_type=password&client_id=bff&client_secret=your-client-secret-here&username=test@example.com&password=test123
+
+###
 
 ### Login Via Yarp
 
 GET {{Poc.Yarp_HostAddress}}/tokenhandler/login/pkce
 Accept: application/json
 
+###
 
 ### Call Weather Forecast API via Yarp
 
+@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDYjlFUkdnRTV3bVZOR3FJeG9YVkpyRmxrN201bHNNb01WcENtVEUwRFhrIn0.eyJleHAiOjE3NzAxNDcwMjQsImlhdCI6MTc3MDE0NjcyNCwianRpIjoib25ydHJvOmMyYWJkZTA2LWQ5ZjUtNjYwNy02NjU5LWE0MDMxNmI0NWEzYSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbInBvYy1hcGkiLCJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiIxNjAzYzVjNC1hOGM5LTQzMjEtYWIwMy0zMmYwMDUyY2RjNmEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwb2MtYXBpIiwic2lkIjoiUHpmaW9Ca1BfTUR2TkItb3J1TWVZblVJIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjUxOTgiLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVzZXIiXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbImltcGVyc29uYXRpb24iLCJtYW5hZ2UtdXNlcnMiLCJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IlRlc3QgVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6InRlc3QiLCJnaXZlbl9uYW1lIjoiVGVzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSJ9.ODafazukhfS3H5Wqo484r2L4B4Fd_cjn2Wny7GDy2Qj_lB7BlNhGqLw92Ar0FNs323QJ-TW1QCHPVYxgRUl8tnXumPKJ5FYKe5Iakh_B85k3TEn5kxZAKZOkpQa-ZaCd-apEDqnpZ8l9CHADrq8lk4LuJZMqD6v7vjJYIwZGgxDUdQZkOQzhtsT8DSiHsNY2NFJALmLAbEMHENI2NDpAAmAHYNPneVhlwu4xnO9Gk33l2ysm8FDkbdxrGw9VnbQTT0n3maDNR80rdG2Lzc222TG9jjtQY24ZtX_T_DEdcaWKXrZeSunWbOvn5ASKCy6UjlXZFsqygpCxWusX4eLiEQ
 GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
-
-
-
-### Call Weather Forecast API via Yarp
-
-GET {{Poc.Yarp_HostAddress}}/weatherforecast
-Accept: application/json
-
-
-
-### Token Exchange - RFC 8693
-@existingAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ4OGs5OXpJSndBVER6cWZObkdoYXFNcHpaSzJxRGUxSzRybTBubDd5T0hZIn0.eyJleHAiOjE3NjkwODk3NTYsImlhdCI6MTc2OTA4OTQ1NiwianRpIjoib25ydHJvOjA4YzI4ZjNjLWMyZDctY2RlNC1mZjlkLTY0MmI3NWNlMWNiMyIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwic3ViIjoiNGY4YTJlN2MtOWYyZi00ODQ4LWE5NDEtNmU1OWJhNDYyNmYzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoicG9jLWFwaSIsInNpZCI6Im5ZMGxOV2h2NjRKVDBjMkRjb2lfbFBVZSIsImFjciI6IjEiLCJhbGxvd2VkLW9yaWdpbnMiOlsiaHR0cDovL2xvY2FsaG9zdDo1MTk4IiwiaHR0cDovL2xvY2FsaG9zdDozMDAwIl0sInJlYWxtX2FjY2VzcyI6eyJyb2xlcyI6WyJhZG1pbiIsInVzZXIiXX0sInNjb3BlIjoiZW1haWwgcHJvZmlsZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQWRtaW4gVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSJ9.Cke-HzuXGUMRW10-ANFZlf8WZ4Y0zyk2cfJYRBToShtR9scnldmxzgPgm1g2OXzAYoZ3s3GgJCDc1Rbpr9UCqIfvw7Q2zLRc9wi4nP5fDLyPxrVIiH885u_QyuXxN1RIzjIiDHkbRMQ3ydv4068nwnJLhECrwAFCEYcLjmB8_fmADP8IJaRe5PYQ8N2dhTiBbo8YMpLrGyYS8oQBrDt66MSNn9X2pp4CJfXIMgaS_yMsM_oGRG1Wah7CNvXr0ExDyBGdA96MjOlpGStN1fUjt04h3WiwW5b-3VQWychGyUY8KzLsGYxcMzLCq7nfZha0d3FchmxLXwXoByw6KwiCMg
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange
-&client_id=poc-api
-&client_secret=your-client-secret-here
-&subject_token={{existingAccessToken}}
-&subject_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_token_type=urn:ietf:params:oauth:token-type:access_token
-&audience=target-audience 
-
-
-
-
-@admin-access-token = <paste-admin-token-here>
-@target-user-id = test@example.com
-
-### Token Exchange - Impersonation (Admin impersonates regular user)
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange
-&client_id=poc-api
-&client_secret=your-client-secret-here
-&subject_token={{admin-access-token}}
-&subject_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_subject={{target-user-id}}
+Authorization: Bearer {{accessToken}}
 
 ###
 
-### Token Exchange - Impersonation with Audience (for specific microservice)
+#####################################################################################################################################################
+# TOKEN EXCHANGE TESTS (RFC 8693)
+# https://www.rfc-editor.org/rfc/rfc8693.html
+#####################################################################################################################################################
+
+### Step 1: Get a fresh admin token
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange
-&client_id=poc-api
-&client_secret=your-client-secret-here
-&subject_token={{admin-access-token}}
-&subject_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_subject={{target-user-id}}
-&audience=weather-api
+grant_type=password&client_id=bff&client_secret=your-client-secret-here&username=admin&password=admin123
 
 ###
 
-@service-token = <paste-service-token-here>
+# Copy the access_token from Step 1 response and paste it below
+@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZYk9GOWpXNGgxa0NVaTBDZnh6OEk2NVFWY0p0ZDdWYkRDaG9ReUdFQTY0In0.eyJleHAiOjE3NzAyOTcwMzYsImlhdCI6MTc3MDI5NjQzNiwianRpIjoib25ydHJvOjExNjY2NzRkLTZkNDItODllNC04MTVmLWZiODIwZTBkNDdlNiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJqZFhfbm9LSU50WHM5QkthS3lQZnBrVWQiLCJzY29wZSI6IiJ9.YlSF0miDLeOh0KDf7dAxlUKGsBU8RpDHAzjxFS0bY8fxUFpvxvRvvO_2rLCyDFEsvZMaRwNlsQW9tBFukRStDEPFYbHUKe0x9svVTiL93c8EyFBkewbGpM3zf3M5w5hX8xo4WT5kYi5vN16JTI6euhaGLUrLgftdvCZOLXyV4k40qt3-vwklVgGBkaP7kknQZB9DZmfxyhFLg74pEuHtVlczYFbTYq4Rl6y3pLQ-UVzDOnD9TIg9CT_hv11Cbyzo7sO-0AIfsykzjUSuNYc02E4WKPbyvEgPYuY7yT8b5_sZN4QN8SBREFuyotEkZvBiRagFths863b93Vlw8ablZw
 
-### Token Exchange - Service-to-User Impersonation (Service acts on behalf of user)
+### Step 2: Token Exchange - Basic (Same subject, no audience)
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange
-&client_id=poc-api
-&client_secret=your-client-secret-here
-&subject_token={{service-token}}
-&subject_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_token_type=urn:ietf:params:oauth:token-type:access_token
-&requested_subject={{target-user-id}}
-&audience=downstream-service
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token
+
+###
+
+### Step 3: Token Exchange with Audience (for specific microservice)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api
+
+###
+
+### Step 3.1: Token Exchange with Audience (for specific microservice)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=api&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api
+
+###
+
+### Step 4: Token Exchange - Impersonation (Admin impersonates test user)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=test
+
+###
+
+### Step 4.1: Token Exchange - Impersonation (User impersonates admin)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=poc-api&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=admin
+
+###
+
+### Step 5: Token Exchange - Impersonation with Audience
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=test&audience=bff
+
+###
+
+#####################################################################################################################################################
+# SERVICE ACCOUNT TOKEN EXCHANGE
+#####################################################################################################################################################
+
+### Step 6: Get Service Account Token (Client Credentials)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=client_credentials&client_id=poc-api&client_secret=your-client-secret-here
+
+###
+
+# Copy the access_token from Step 6 response and paste it below
+@serviceToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDYjlFUkdnRTV3bVZOR3FJeG9YVkpyRmxrN201bHNNb01WcENtVEUwRFhrIn0.eyJleHAiOjE3NzAxNDY0NDksImlhdCI6MTc3MDE0NjE0OSwianRpIjoidHJydGNjOjA5NjA3YTZkLWFlODAtYTliZC1jNjJiLThjNjA0OGUxYWZkZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbInBvYy1hcGkiLCJyZWFsbS1tYW5hZ2VtZW50Il0sInN1YiI6IjRmZDg5ZGNjLTY3NjYtNDBkNy05NWVhLWMxNDljOGUxZWJkMCIsInR5cCI6IkJlYXJlciIsImF6cCI6InBvYy1hcGkiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NTE5OCIsImh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCJdLCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJpbXBlcnNvbmF0aW9uIiwibWFuYWdlLXVzZXJzIiwidmlldy11c2VycyIsInF1ZXJ5LWdyb3VwcyIsInF1ZXJ5LXVzZXJzIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImNsaWVudEhvc3QiOiIxNzIuMjEuMC4xIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LXBvYy1hcGkiLCJjbGllbnRBZGRyZXNzIjoiMTcyLjIxLjAuMSIsImNsaWVudF9pZCI6InBvYy1hcGkifQ.UQAxdJGRF-8sTd2tP536ipuK_RYgLWDiv6OiwwMGe0IwMu4ak_BVEnwfvSsnQB-MeK97MKR_1gsVHyz31Q4_qL2q0lBK5UBMfQsNzM3fcMvcLxTFT4HWtvoAK3oryoJ9DOeFOSmYXol51Z3XSPacqblY8SEg6urci1mFIFXGpVVQVHjcd1nEtZLRnzeqBn_mNlIQIX5_mA0tWNhr_YwOuI0yeCz_YsD76ybqfXjTHjCMU4wHthBXwGlVuZSL3DNfHsv-G-5ho7KoPBsTdemb3JwY9efz0fq9OfKNkh8ngCkeoAcyIyqPtgzcBBbhtKYHXPBrQTv0wUGflJSeuE1-Bw
+
+### Step 7: Service-to-User Impersonation (Service acts on behalf of user)
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=poc-api&client_secret=your-client-secret-here&subject_token={{serviceToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=test&audience=poc-api
