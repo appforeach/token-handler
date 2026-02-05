@@ -10,6 +10,30 @@
   "bruteForceProtected": true,
   "browserFlow": "browser",
   "directGrantFlow": "direct grant",
+  "clientScopes": [
+    {
+      "name": "api-audience",
+      "description": "API Audience Scope for token exchange",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "api-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
+    }
+  ],
   "clients": [
     {
       "clientId": "api",
@@ -35,6 +59,45 @@
         "access.token.lifespan": "600",
         "client.secret.creation.time": "1234567890",
         "oauth2.token.exchange.grant.enabled": "true"
+      },
+      "authorizationSettings": {
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "Token Exchange Permission",
+            "type": "urn:api:resources:token-exchange",
+            "ownerManagedAccess": false,
+            "attributes": {}
+          }
+        ],
+        "policies": [
+          {
+            "name": "bff-client-policy",
+            "description": "Policy for bff client",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"bff\"]"
+            }
+          },
+          {
+            "name": "token-exchange-permission",
+            "description": "Permission for token exchange",
+            "type": "resource",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "resources": "[\"Token Exchange Permission\"]",
+              "applyPolicies": "[\"bff-client-policy\"]"
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "name": "token-exchange"
+          }
+        ]
       },
       "protocolMappers": [
         {
@@ -75,6 +138,13 @@
         "client.secret.creation.time": "1234567890",
         "oauth2.token.exchange.grant.enabled": "true"
       },
+      "defaultClientScopes": [
+        "email",
+        "profile"
+      ],
+      "optionalClientScopes": [
+        "api-audience"
+      ],
       "protocolMappers": [
         {
           "name": "audience-mapper",
@@ -86,24 +156,29 @@
             "id.token.claim": "false",
             "access.token.claim": "true"
           }
+        },
+        {
+          "name": "api-audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "api",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
         }
       ]
-    },
-    {
-      "clientId": "account",
-      "enabled": true,
-      "publicClient": true,
-      "protocol": "openid-connect",
-      "redirectUris": [ "http://localhost:3000/*" ],
-      "webOrigins": [ "http://localhost:3000" ],
-      "standardFlowEnabled": true,
-      "implicitFlowEnabled": false,
-      "directAccessGrantsEnabled": true,
-      "attributes": {
-        "oauth2.token.exchange.grant.enabled": "true"
-      }
     }
   ],
+  "clientScopeMappings": {
+    "api": [
+      {
+        "client": "bff",
+        "roles": []
+      }
+    ]
+  },
   "users": [
     {
       "username": "test",
