@@ -169,6 +169,20 @@
           }
         }
       ]
+    },
+    {
+      "clientId": "account",
+      "enabled": true,
+      "publicClient": true,
+      "protocol": "openid-connect",
+      "redirectUris": [ "http://localhost:3000/*" ],
+      "webOrigins": [ "http://localhost:3000" ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "attributes": {
+        "oauth2.token.exchange.grant.enabled": "true"
+      }
     }
   ],
   "clientScopeMappings": {

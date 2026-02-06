@@ -23,21 +23,21 @@ public class TokenExchangeTransform : RequestTransform
     public override async ValueTask ApplyAsync(RequestTransformContext context)
     {
         var authHeader = context.HttpContext.Request.Headers.Authorization.FirstOrDefault();
-        
+
         if (string.IsNullOrEmpty(authHeader) || !authHeader.StartsWith("Bearer "))
         {
             return;
         }
 
         var subjectToken = authHeader.Substring("Bearer ".Length);
-        
+
         try
         {
             var newToken = await ExchangeTokenAsync(subjectToken);
-            
+
             if (!string.IsNullOrEmpty(newToken))
             {
-                context.ProxyRequest.Headers.Authorization = 
+                context.ProxyRequest.Headers.Authorization =
                     new AuthenticationHeaderValue("Bearer", newToken);
                 _logger.LogInformation("Token exchanged successfully");
             }
@@ -60,7 +60,7 @@ public class TokenExchangeTransform : RequestTransform
         var tokenEndpoint = $"{keycloakUrl}/realms/{realm}/protocol/openid-connect/token";
 
         var httpClient = _httpClientFactory.CreateClient();
-        
+
         var requestBody = new Dictionary<string, string>
         {
             ["grant_type"] = "urn:ietf:params:oauth:grant-type:token-exchange",

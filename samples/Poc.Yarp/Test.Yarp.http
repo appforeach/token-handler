@@ -36,7 +36,7 @@ Accept: application/json
 
 ### Call Weather Forecast API via Yarp
 
-@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJZYk9GOWpXNGgxa0NVaTBDZnh6OEk2NVFWY0p0ZDdWYkRDaG9ReUdFQTY0In0.eyJleHAiOjE3NzAzNzY4NDEsImlhdCI6MTc3MDM3NjI0MSwianRpIjoib25ydHJvOjk2ODc4NjU5LWU4MzUtYTUxZS0xZjIxLTVlODZkYmE5MDM0OCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiI3UHV0MzNEcDJ0OWZQanR0T1M0OHpIZjUiLCJzY29wZSI6IiJ9.IvSkchre4JgXPtvgDKABtkxE-GzaOrymXziaBfmzZN1cxsZ9CIlZIsR_k-5KhlYD3YAaHQam7aoRV5FL8pM3no3YOFpboGD8qmpnfz8rLcC7imkWkwyqpHhXlM-2gbrynGVamMfCvjFHEnFqmpx7YkmTzDChCJHpBUm9CTarY-LIktKahlzYsX23tzHULAWe18ywm9Cd6Sn1nyxIn83awBkYOjiKyDantq7UaGYEG4ao_l2_JgeZ80Rr1B_Wp2awLbgSrg0q8zz_3pDl_c5DTvfn6hwuuTVHrd309uz2JEzfvBUEdt3x4X2S8CjtxU3-GB1hMpkPMp5eUSnHPbTuuA
+@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoYkQxa25RajgxTWNDV2JlMmtfWTEzQVRVVEp4R0hyLUdfakRhZVJQT1JRIn0.eyJleHAiOjE3NzAzNzg3MzgsImlhdCI6MTc3MDM3ODEzOCwianRpIjoib25ydHJvOjRiYjdiNzYwLTg3NjctYTY0ZS03MTM3LTdmNjU0MzBlYWNkMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImJmZiIsImFwaSJdLCJzdWIiOiI3MjExNjEyMy05NGQyLTQ3YjEtYjk3NS0yYTNjMmMwYzgyNjAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJ6dW94SzkxTmt0OHdUQ1lqXzBGczJPbWciLCJzY29wZSI6IiJ9.By4mzbbiqOXN60uLfcUncjjy7rOHdDL5qetgjMtFhsmifruBRAr6A3M89WPY9y16DQDvq-wBXSg039fUkbBNz0VohNQquJnvkawflBHWOVizDprO9nZyc25yktKkvUGbpvBgA0qGslgcd9zXn9TftIUIDXIR4YdPGdBt5df-nfpkFHJK9hU-xymvxJbKTx5nC0GmgQX0sbLPKrv8JWws8V-RAG89w0z79ByiBYaSRrOibcGfD7oQEwvJfaMOZBaLOy27XNioBA77RvBMgTYGmr44uCYP6zqPtDBMolJyl5fMZFtMGlDppDiH5kAY_BhfEJpv1kPjPVwoXYTRPBhu2Q
 GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
 Authorization: Bearer {{accessToken}}
@@ -46,20 +46,27 @@ Authorization: Bearer {{accessToken}}
 #####################################################################################################################################################
 # TOKEN EXCHANGE TESTS (RFC 8693)
 # https://www.rfc-editor.org/rfc/rfc8693.html
+#
+# IMPORTANT: Token exchange inherits scopes from the subject_token. 
+# You cannot add NEW scopes during exchange - only use scopes present in the original token.
+# If the subject_token has no scopes, the exchanged token will also have no scopes.
 #####################################################################################################################################################
 
 ### Step 1: Get a fresh admin token
+# NOTE: The 'api' client should have 'profile' and 'email' in its default client scopes       
+# to ensure the token includes user claims. Add scope parameter to ensure this.
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
-grant_type=password&client_id=api&client_secret=your-client-secret-here&username=admin&password=admin123
+grant_type=password&client_id=bff&client_secret=your-client-secret-here&username=admin&password=admin123
 
 ###
 
 # Copy the access_token from Step 1 response and paste it below
-@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDYjlFUkdnRTV3bVZOR3FJeG9YVkpyRmxrN201bHNNb01WcENtVEUwRFhrIn0.eyJleHAiOjE3NzAxNDcwMjQsImlhdCI6MTc3MDE0NjcyNCwianRpIjoib25ydHJvOmMyYWJkZTA2LWQ5ZjUtNjYwNy02NjU5LWE0MDMxNmI0NWEzYSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbInBvYy1hcGkiLCJyZWFsbS1tYW5hZ2VtZW50IiwiYWNjb3VudCJdLCJzdWIiOiIxNjAzYzVjNC1hOGM5LTQzMjEtYWIwMy0zMmYwMDUyY2RjNmEiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJwb2MtYXBpIiwic2lkIjoiUHpmaW9Ca1BfTUR2TkItb3J1TWVZblVJIiwiYWNyIjoiMSIsImFsbG93ZWQtb3JpZ2lucyI6WyJodHRwOi8vbG9jYWxob3N0OjUxOTgiLCJodHRwOi8vbG9jYWxob3N0OjMwMDAiXSwicmVhbG1fYWNjZXNzIjp7InJvbGVzIjpbInVzZXIiXX0sInJlc291cmNlX2FjY2VzcyI6eyJyZWFsbS1tYW5hZ2VtZW50Ijp7InJvbGVzIjpbImltcGVyc29uYXRpb24iLCJtYW5hZ2UtdXNlcnMiLCJ2aWV3LXVzZXJzIiwicXVlcnktZ3JvdXBzIiwicXVlcnktdXNlcnMiXX0sImFjY291bnQiOnsicm9sZXMiOlsibWFuYWdlLWFjY291bnQiLCJ2aWV3LXByb2ZpbGUiXX19LCJzY29wZSI6InByb2ZpbGUgZW1haWwiLCJlbWFpbF92ZXJpZmllZCI6dHJ1ZSwibmFtZSI6IlRlc3QgVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6InRlc3QiLCJnaXZlbl9uYW1lIjoiVGVzdCIsImZhbWlseV9uYW1lIjoiVXNlciIsImVtYWlsIjoidGVzdEBleGFtcGxlLmNvbSJ9.ODafazukhfS3H5Wqo484r2L4B4Fd_cjn2Wny7GDy2Qj_lB7BlNhGqLw92Ar0FNs323QJ-TW1QCHPVYxgRUl8tnXumPKJ5FYKe5Iakh_B85k3TEn5kxZAKZOkpQa-ZaCd-apEDqnpZ8l9CHADrq8lk4LuJZMqD6v7vjJYIwZGgxDUdQZkOQzhtsT8DSiHsNY2NFJALmLAbEMHENI2NDpAAmAHYNPneVhlwu4xnO9Gk33l2ysm8FDkbdxrGw9VnbQTT0n3maDNR80rdG2Lzc222TG9jjtQY24ZtX_T_DEdcaWKXrZeSunWbOvn5ASKCy6UjlXZFsqygpCxWusX4eLiEQ
+@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJoYkQxa25RajgxTWNDV2JlMmtfWTEzQVRVVEp4R0hyLUdfakRhZVJQT1JRIn0.eyJleHAiOjE3NzAzNzg3MzgsImlhdCI6MTc3MDM3ODEzOCwianRpIjoib25ydHJvOjRiYjdiNzYwLTg3NjctYTY0ZS03MTM3LTdmNjU0MzBlYWNkMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImJmZiIsImFwaSJdLCJzdWIiOiI3MjExNjEyMy05NGQyLTQ3YjEtYjk3NS0yYTNjMmMwYzgyNjAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJ6dW94SzkxTmt0OHdUQ1lqXzBGczJPbWciLCJzY29wZSI6IiJ9.By4mzbbiqOXN60uLfcUncjjy7rOHdDL5qetgjMtFhsmifruBRAr6A3M89WPY9y16DQDvq-wBXSg039fUkbBNz0VohNQquJnvkawflBHWOVizDprO9nZyc25yktKkvUGbpvBgA0qGslgcd9zXn9TftIUIDXIR4YdPGdBt5df-nfpkFHJK9hU-xymvxJbKTx5nC0GmgQX0sbLPKrv8JWws8V-RAG89w0z79ByiBYaSRrOibcGfD7oQEwvJfaMOZBaLOy27XNioBA77RvBMgTYGmr44uCYP6zqPtDBMolJyl5fMZFtMGlDppDiH5kAY_BhfEJpv1kPjPVwoXYTRPBhu2Q
 
 ### Step 2: Token Exchange - Basic (Same subject, no audience)
+# Scopes are inherited from adminAccessToken - do not add scope parameter
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -68,6 +75,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_
 ###
 
 ### Step 3: Token Exchange with Audience (for specific microservice)
+# Scopes are inherited from adminAccessToken
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -76,6 +84,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_
 ###
 
 ### Step 3.1: Token Exchange with Audience (for specific microservice)
+# Scopes are inherited from adminAccessToken
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -84,6 +93,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=api&client_
 ###
 
 ### Step 4: Token Exchange - Impersonation (Admin impersonates test user)
+# Scopes will be based on the target user's (test) permissions
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -92,6 +102,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_
 ###
 
 ### Step 4.1: Token Exchange - Impersonation (User impersonates admin)
+# This may fail if 'test' user doesn't have impersonation permissions
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -100,6 +111,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=poc-api&cli
 ###
 
 ### Step 5: Token Exchange - Impersonation with Audience
+# Combines impersonation with audience targeting
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -112,6 +124,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_
 #####################################################################################################################################################
 
 ### Step 6: Get Service Account Token (Client Credentials)
+# Service account tokens typically have limited scopes
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -123,7 +136,10 @@ grant_type=client_credentials&client_id=poc-api&client_secret=your-client-secret
 @serviceToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJDYjlFUkdnRTV3bVZOR3FJeG9YVkpyRmxrN201bHNNb01WcENtVEUwRFhrIn0.eyJleHAiOjE3NzAxNDY0NDksImlhdCI6MTc3MDE0NjE0OSwianRpIjoidHJydGNjOjA5NjA3YTZkLWFlODAtYTliZC1jNjJiLThjNjA0OGUxYWZkZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbInBvYy1hcGkiLCJyZWFsbS1tYW5hZ2VtZW50Il0sInN1YiI6IjRmZDg5ZGNjLTY3NjYtNDBkNy05NWVhLWMxNDljOGUxZWJkMCIsInR5cCI6IkJlYXJlciIsImF6cCI6InBvYy1hcGkiLCJhY3IiOiIxIiwiYWxsb3dlZC1vcmlnaW5zIjpbImh0dHA6Ly9sb2NhbGhvc3Q6NTE5OCIsImh0dHA6Ly9sb2NhbGhvc3Q6MzAwMCJdLCJyZXNvdXJjZV9hY2Nlc3MiOnsicmVhbG0tbWFuYWdlbWVudCI6eyJyb2xlcyI6WyJpbXBlcnNvbmF0aW9uIiwibWFuYWdlLXVzZXJzIiwidmlldy11c2VycyIsInF1ZXJ5LWdyb3VwcyIsInF1ZXJ5LXVzZXJzIl19fSwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsImNsaWVudEhvc3QiOiIxNzIuMjEuMC4xIiwicHJlZmVycmVkX3VzZXJuYW1lIjoic2VydmljZS1hY2NvdW50LXBvYy1hcGkiLCJjbGllbnRBZGRyZXNzIjoiMTcyLjIxLjAuMSIsImNsaWVudF9pZCI6InBvYy1hcGkifQ.UQAxdJGRF-8sTd2tP536ipuK_RYgLWDiv6OiwwMGe0IwMu4ak_BVEnwfvSsnQB-MeK97MKR_1gsVHyz31Q4_qL2q0lBK5UBMfQsNzM3fcMvcLxTFT4HWtvoAK3oryoJ9DOeFOSmYXol51Z3XSPacqblY8SEg6urci1mFIFXGpVVQVHjcd1nEtZLRnzeqBn_mNlIQIX5_mA0tWNhr_YwOuI0yeCz_YsD76ybqfXjTHjCMU4wHthBXwGlVuZSL3DNfHsv-G-5ho7KoPBsTdemb3JwY9efz0fq9OfKNkh8ngCkeoAcyIyqPtgzcBBbhtKYHXPBrQTv0wUGflJSeuE1-Bw
 
 ### Step 7: Service-to-User Impersonation (Service acts on behalf of user)
+# Service account impersonates a user - scopes based on target user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=poc-api&client_secret=your-client-secret-here&subject_token={{serviceToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=test&audience=poc-api
+
+###
