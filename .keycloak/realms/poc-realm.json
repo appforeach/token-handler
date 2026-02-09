@@ -60,6 +60,16 @@
         "client.secret.creation.time": "1234567890",
         "oauth2.token.exchange.grant.enabled": "true"
       },
+      "defaultClientScopes": [
+        "email",
+        "profile"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ],
       "authorizationSettings": {
         "policyEnforcementMode": "ENFORCING",
         "resources": [
@@ -67,7 +77,12 @@
             "name": "Token Exchange Permission",
             "type": "urn:api:resources:token-exchange",
             "ownerManagedAccess": false,
-            "attributes": {}
+            "uris": [],
+            "scopes": [
+              {
+                "name": "token-exchange"
+              }
+            ]
           }
         ],
         "policies": [
@@ -84,18 +99,20 @@
           {
             "name": "token-exchange-permission",
             "description": "Permission for token exchange",
-            "type": "resource",
+            "type": "scope",
             "logic": "POSITIVE",
-            "decisionStrategy": "UNANIMOUS",
+            "decisionStrategy": "AFFIRMATIVE",
             "config": {
               "resources": "[\"Token Exchange Permission\"]",
+              "scopes": "[\"token-exchange\"]",
               "applyPolicies": "[\"bff-client-policy\"]"
             }
           }
         ],
         "scopes": [
           {
-            "name": "token-exchange"
+            "name": "token-exchange",
+            "displayName": "token-exchange"
           }
         ]
       },
@@ -132,7 +149,7 @@
       "implicitFlowEnabled": false,
       "directAccessGrantsEnabled": true,
       "serviceAccountsEnabled": true,
-      "authorizationServicesEnabled": true,
+      "authorizationServicesEnabled": false,
       "attributes": {
         "access.token.lifespan": "600",
         "client.secret.creation.time": "1234567890",
@@ -153,17 +170,6 @@
           "consentRequired": false,
           "config": {
             "included.client.audience": "bff",
-            "id.token.claim": "false",
-            "access.token.claim": "true"
-          }
-        },
-        {
-          "name": "api-audience-mapper",
-          "protocol": "openid-connect",
-          "protocolMapper": "oidc-audience-mapper",
-          "consentRequired": false,
-          "config": {
-            "included.client.audience": "api",
             "id.token.claim": "false",
             "access.token.claim": "true"
           }
