@@ -1,5 +1,36 @@
 # Keycloak Token Exchange (RFC 8693) - Important Notes
 
+## The Audience Security Pattern
+
+### Critical Discovery: JWT `aud` Claim and Token Exchange
+
+**Question:** Should JWT contain `aud` in order to be exchanged?
+
+**Answer:** It depends on your security model:
+
+#### Option 1: Permissive (Less Secure - NOT RECOMMENDED)
+- Subject token includes target audience: `"aud": ["bff", "api"]`
+- Token exchange works because the token already has access
+- ?? **Security Issue**: BFF token can be used directly against the API
+
+#### Option 2: Restricted (Secure - RECOMMENDED)
+- Subject token ONLY includes BFF audience: `"aud": ["bff"]`
+- Token exchange works via Keycloak **authorization policy** (not token content)
+- ? **Security Benefit**: BFF token cannot be used directly against the API
+- ? **Zero Trust**: Each service validates its own audience requirement
+
+### How It Works
+
+1. **BFF gets user token** with `"aud": ["bff"]`
+2. **BFF performs token exchange** requesting `audience=api`
+3. **Keycloak checks authorization policy**: "Is BFF allowed to exchange for API?"
+4. **If policy allows**: Returns new token with `"aud": ["api"]`
+5. **API validates audience**: Only accepts tokens with `"aud": ["api"]`
+
+**Result:** Attackers who compromise BFF tokens cannot access backend APIs directly.
+
+See `AUDIENCE-SECURITY-PATTERN.md` and `KEYCLOAK-AUDIENCE-CONFIG.md` for full details.
+
 ## The Scope Inheritance Problem
 
 When performing token exchange in Keycloak, you **cannot add new scopes** that weren't in the original `subject_token`. This is a key principle of RFC 8693.
