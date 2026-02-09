@@ -262,10 +262,11 @@
       },
       "defaultClientScopes": [
         "email",
-        "profile"
+        "profile",
+        "api-audience"
       ],
       "optionalClientScopes": [
-        "api-audience"
+        
       ],
       "protocolMappers": [
         {

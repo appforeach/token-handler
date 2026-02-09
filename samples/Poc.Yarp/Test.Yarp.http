@@ -1,4 +1,4 @@
-@Poc.Yarp_HostAddress = http://localhost:5198
+﻿@Poc.Yarp_HostAddress = http://localhost:5198
 @Poc.KeyCloak_HostAddress = http://localhost:8080
 @Poc.KeyCloak_TokenEndpoint = http://localhost:8080/realms/poc/protocol/openid-connect/token
 
@@ -36,7 +36,7 @@ Accept: application/json
 
 ### Call Weather Forecast API via Yarp
 
-@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5NWZ1Wm9BVWEwN0szRW5JSkZMNl9zR2xobEg4SHdacTIydTE2cjhTQlE4In0.eyJleHAiOjE3NzA2NTQ0NDcsImlhdCI6MTc3MDY1Mzg0NywianRpIjoib25ydHJvOjJmOThmOGEzLWI4ZGUtZjliMi1jYTA3LTAwNTYxYTVhN2MzMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwic3ViIjoiODcyZWIwMTktOTRiNy00ZjEyLTliMTMtMDFmNmEzMWY4ZmM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiRjBfUElUdUQzRnlEY292dzIzMlplT29OIiwic2NvcGUiOiIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.PV2QmYCpOfdoAaXRj0XndutDh_jDGfk7R0DZm2kn1dvviSxm1FIvSk016C-MwXQ30nZi_t2vvdzUzxK2XC7pIw8uml6HKO1nOMye-K-k-a3h02sujLHmYiWwbguOJnU58PcLU_JdwXI8ahnW6XPaeWs2Ztmvn6rj92eAgRmOImqwBp40URZeq9_sNP55fVrQdkuffCNVP_Fr2gDjfNAIe27RZxUCNe7ujCKbojsnPYzzrSoCdiDpx_aC6j7aF9GlYM_A4_7_ijQbdylK-X9GrJzKLAZw-CMMxgcyEyLEQEdRrtWWPieRIZEUjO8EfuvvEEeZsE6Ge4BdEESiwhmNsg
+@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5NWZ1Wm9BVUEwN0szRW5JSkZMNl9zR2xobEg4SHdacTIydTE2cjhTQlE4In0.eyJleHAiOjE3NzA2NTQ0NDcsImlhdCI6MTc3MDY1Mzg0NywianRpIjoib25ydHJvOjJmOThmOGEzLWI4ZGUtZjliMi1jYTA3LTAwNTYxYTVhN2MzMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwic3ViIjoiODcyZWIwMTktOTRiNy00ZjEyLTliMTMtMDFmNmEzMWY4ZmM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiRjBfUElUdUQzRnlEY292dzIzMlplT29OIiwic2NvcGUiOiIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.PV2QmYCpOfdoAaXRj0XndutDh_jDGfk7R0DZm2kn1dvviSxm1FIvSk016C-MwXQ30nZi_t2vvdzUzxK2XC7pIw8uml6HKO1nOMye-K-k-a3h02sujLHmYiWwbguOJnU58PcLU_JdwXI8ahnW6XPaeWs2Ztmvn6rj92eAgRmOImqwBp40URZeq9_sNP55fVrQdkuffCNVP_Fr2gDjfNAIe27RZxUCNe7ujCKbojsnPYzzrSoCdiDpx_aC6j7aF9GlYM_A4_7_ijQbdylK-X9GrJzKLAZw-CMMxgcyEyLEQEdRrtWWPieRIZEUjO8EfuvvEEeZsE6Ge4BdEESiwhmNsg
 GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
 Authorization: Bearer {{accessToken}}
@@ -70,7 +70,7 @@ grant_type=password&client_id=bff&client_secret=your-client-secret-here&username
 
 # Copy the access_token from Step 1 response and paste it below
 # IMPORTANT: Decode this token at https://jwt.io and verify it has ONLY "aud": ["bff"]
-@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJReUR5RzQyeWl5eVA0bV9xOC1yLW92NmVEMmhYTjl2Mjc1cnhZVndRbjNVIn0.eyJleHAiOjE3NzA2NjEzMjAsImlhdCI6MTc3MDY2MDcyMCwianRpIjoib25ydHJvOjRlZDUyMzY1LThiN2ItYWE1My1iNTczLTYwODNkMzE4MzkwNiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwic3ViIjoiMzM5Nzk4NmUtYWM1OS00YjA3LTkyMDgtMWE0ZjM3Y2VhMDUzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiSDVaQWNfZkpMWXlEcmNoNEdXN0d1cHN3Iiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.edp6rYpyw7eiPSwrM6K2RwO7tAtfj95QLzN8hwWS1PynQ7l7cQyY6jXl2OEhe6t8MYj6fmQ-k3DyrggfNjJ4jERwf_x-cZ1NZKiXEZOCi00-7JrwIeTxGjJ3lDAi8bFrLQ7tTqU_M6zilRouXG44oGI1ZqptRdKvsW_jJzGqGowALTOyWDSVM59hhelBM8SjiK0DOiNcEwVvSC2hDpullimg_8XN3Nvzy0NpfGTNcbmRIncDvmT9UV8vlfjnzdI4EV3MYCA0pju_ZYXRQfTjLZwYgE3BuxeY17wEiZiFWeDhxTX92bP0N6t0Qo2RPcz5EU9NDhg6Q0NSH21XQue-GQ
+@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkXzZsS0FEenJGMXJ3TlUzbXpXVHlBalJwdGxuU0JqaEVRbWpzR2dvQm5BIn0.eyJleHAiOjE3NzA2NjM2MDQsImlhdCI6MTc3MDY2MzAwNCwianRpIjoib25ydHJvOmU0ZDhiZTk5LWE1NDQtM2ZiZi04NTY3LTY3YmQxOWEzOTQ1OCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJzdWIiOiJlNjMwYTIyNS0wYzA5LTQ3ODAtOTlhMS03NjE5YTA5MTNmODAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiI0QmlnS1M2YWVMUkZiY0hIR0laeEs3MEgiLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgYXBpLWF1ZGllbmNlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.j9O2iiUkB4Lh5hMnAEMqaLngLicI44zio8fcycbVqJ1sXO_XahwN0hqhXA-omY5kWpRomPVI0JnV4irLqE77aIFDipJ-DzIjjO8WzZvI9kok4mgML2IvGI5jMNWLaL3rK2RKF_Yy0iSrl-TDzv1zugWBaqqdYDWjebiwJ1jQhPDUZvezDEbVCnonnCzkm_sydcwNH5gP7cbOkGASmQ8J6dPw8AaSlObTVhYpBJo17y8bZNu_tXGHXtRTds_aewg5ot9XTMAuQ7xRQhcfzdlOTcBQ7J753VjTpenxBcfMm9Guv47c_dOXgKqis-czDscScvU8mcnoYhFGgUdEv0o9-Q
 
 ### Step 1.1: SECURITY TEST - Try to use BFF token directly against API
 # EXPECTED: This should FAIL with 401 Unauthorized
@@ -91,23 +91,30 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_
 
 ###
 
-### Step 3: Token Exchange with Audience (for specific microservice)
+### Step 3: Token Exchange with Audience (for specific microservice) ✅ CORRECT WAY
 # THIS IS THE KEY TEST: Exchange BFF token for API token
 # EXPECTED: Success, returns token with "aud": ["api"]
-# NOTE: This works because of Keycloak's token exchange authorization policy,
-#       NOT because the original token has "api" in its audience
+# NOTE: Use the BFF client (which is in the token's audience) to perform the exchange
+# NOTE: api-audience is now a DEFAULT scope, so no need to request it explicitly
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api
 
+### Step 3.1: Token Exchange with Explicit Scope (Alternative)
+# This also works but is NOT necessary since api-audience is a default scope
+# Kept here for reference and testing
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api&scope=api-audience
+
 ###
 
-### Step 3.1: Token Exchange with Audience (for specific microservice) Wordked out !!!
-# THIS IS THE KEY TEST: Exchange BFF token for API token
-# EXPECTED: Success, returns token with "aud": ["api"]
-# NOTE: This works because of Keycloak's token exchange authorization policy,
-#       NOT because the original token has "api" in its audience
+### Step 3.2: NEGATIVE TEST - Token Exchange with API Client ❌ WILL FAIL
+# THIS WILL FAIL: "Client is not within the token audience"
+# The API client is NOT in the BFF token's audience, so it cannot exchange it
+# This validates that only the BFF client can exchange its own tokens
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
@@ -119,7 +126,7 @@ grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=api&client_
 # IMPORTANT: Decode this token at https://jwt.io and verify it has ONLY "aud": ["api"]
 @apiAccessToken = paste_exchanged_token_here
 
-### Step 3.1: SECURITY TEST - Use exchanged token against API
+### Step 4: SECURITY TEST - Use exchanged token against API
 # EXPECTED: This should SUCCEED with 200 OK
 # The exchanged token has the correct "api" audience
 GET http://localhost:5001/weatherforecast
@@ -127,107 +134,3 @@ Accept: application/json
 Authorization: Bearer {{apiAccessToken}}
 
 ###
-
-#####################################################################################################################################################
-# SERVICE ACCOUNT TOKEN EXCHANGE
-#####################################################################################################################################################
-
-### Step 6: Get Service Account Token (Client Credentials)
-# Service account tokens typically have limited scopes
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=client_credentials&client_id=poc-api&client_secret=your-client-secret-here
-
-###
-
-# Copy the access_token from Step 6 response and paste it below
-@serviceToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5NWZ1Wm9BVWEwN0szRW5JSkZMNl9zR2xobEg4SHdacTIydTE2cjhTQlE4In0.eyJleHAiOjE3NzA2NjA4NjIsImlhdCI6MTc3MDY2MDI2MiwianRpIjoib25ydHJvOjE3M2YxYThkLWY0MWYtNTU3Mi03OGJmLTgxMzEzMjJlY2Y0ZiIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoidERhc1B4elFnNU5lOE1tOFN2d2pPMlp6Iiwic2NvcGUiOiIifQ.cHqKu3F8nEM3tsSxwW8cCSmu4osrhqIjq1Q1z4WnX1fle334dz6rovLyEqJ99TBaAy7NaIKIGF3u5o9gebUJe2dXLphKyFJsC0I6qgLd1tPI_Lh5DUluxfxd36qdHGjFHIzixwBYOOZi7uE1seygdKh1jrAyRrX1xNxiU5PydAR4CaO1ckrOjM6KUaTDvMDhO3x3evpqf6roJvZhv9oNXu1KkKgXk_b1pDZKs5EeixMceF-hN5ctSTbL1XdMMFQ5UWHRGctJ5tjrxkJFqBDJkNzGxf8yT7m4jEW15SEm2oKNC4AwbSXVr9IQ2JG_g8UwbJzEQPWE6hSE7mdcTi5Wbg
-
-### Step 7: Service-to-User Impersonation (Service acts on behalf of user)
-# Service account impersonates a user - scopes based on target user
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=poc-api&client_secret=your-client-secret-here&subject_token={{serviceToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&requested_subject=test&audience=poc-api
-
-###
-
-#####################################################################################################################################################
-# AUDIENCE SECURITY PATTERN VALIDATION
-# These tests validate that the audience-based security pattern is working correctly
-#####################################################################################################################################################
-
-### VALIDATION 1: BFF Token Audience Check
-# Get a token and verify it has ONLY "bff" audience
-# @name bffTokenCheck
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=password&client_id=bff&client_secret=your-client-secret-here&username=test&password=test123
-
-### 
-# Response should contain access_token
-# Decode at https://jwt.io - should show: "aud": ["bff"] (NOT ["bff", "api"])
-# If you see "api" in the audience, remove the api-audience-mapper from the bff client
-
-### VALIDATION 2: Direct API Call with BFF Token (Should Fail)
-# @name directApiCallFail
-@bffTestToken = paste_bff_token_here
-GET http://localhost:5001/weatherforecast
-Accept: application/json
-Authorization: Bearer {{bffTestToken}}
-
-###
-# EXPECTED: 401 Unauthorized - Token validation should fail due to audience mismatch
-# If this succeeds, your API is NOT validating audience correctly
-
-### VALIDATION 3: Token Exchange BFF -> API (Should Succeed)
-# @name tokenExchangeSuccess
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-
-grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{bffTestToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api
-
-###
-# EXPECTED: Success, returns token with "aud": ["api"]
-# This proves the exchange authorization policy is configured correctly
-
-### VALIDATION 4: API Call with Exchanged Token (Should Succeed)
-# @name apiCallSuccess
-@exchangedApiToken = paste_exchanged_api_token_here
-GET http://localhost:5001/weatherforecast
-Accept: application/json
-Authorization: Bearer {{exchangedApiToken}}
-
-###
-# EXPECTED: 200 OK - The exchanged token has correct "api" audience
-# If this fails, check API's JWT validation configuration
-
-#####################################################################################################################################################
-# TROUBLESHOOTING GUIDE
-#####################################################################################################################################################
-
-# PROBLEM: Token exchange fails with "Audience not valid"
-# SOLUTION: Configure token exchange permissions in Keycloak:
-#   1. Clients -> api -> Permissions -> token-exchange -> Enable
-#   2. Create client policy allowing "bff" client
-#   3. Add permission linking the policy
-
-# PROBLEM: BFF token works directly against API
-# SOLUTION: BFF client has api-audience-mapper
-#   1. Clients -> bff -> Client scopes -> Dedicated scope
-#   2. Remove "api-audience-mapper" if present
-#   3. Keep only "audience-mapper" that adds "bff" audience
-
-# PROBLEM: API doesn't reject BFF tokens
-# SOLUTION: API not validating audience
-#   1. Check API authentication configuration
-#   2. Ensure ValidateAudience = true
-#   3. Ensure ValidAudience = "api"
-
-# PROBLEM: Exchanged token missing "sub" claim
-# SOLUTION: Original token missing user context
-#   1. Ensure password grant is used (not client_credentials)
-#   2. Check client default scopes include "profile" and "email"
-#   3. Verify Keycloak user exists and is enabled
