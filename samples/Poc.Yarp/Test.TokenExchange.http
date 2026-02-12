@@ -3,14 +3,6 @@
 @Poc.KeyCloak_TokenEndpoint = http://localhost:8080/realms/poc/protocol/openid-connect/token
 
 
-### Get Client Credentials Grant Type from KeyCloak
-POST {{Poc.KeyCloak_TokenEndpoint}}
-Content-Type: application/x-www-form-urlencoded
-  
-grant_type=client_credentials&client_id=bff&client_secret=your-client-secret-here
-
-###
-
 ### Login to KeyCloak with Password Grant Type as an admin user
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
@@ -36,12 +28,15 @@ Accept: application/json
 
 ### Call Weather Forecast API via Yarp
 
-@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJ5NWZ1Wm9BVUEwN0szRW5JSkZMNl9zR2xobEg4SHdacTIydTE2cjhTQlE4In0.eyJleHAiOjE3NzA2NTQ0NDcsImlhdCI6MTc3MDY1Mzg0NywianRpIjoib25ydHJvOjJmOThmOGEzLWI4ZGUtZjliMi1jYTA3LTAwNTYxYTVhN2MzMSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwic3ViIjoiODcyZWIwMTktOTRiNy00ZjEyLTliMTMtMDFmNmEzMWY4ZmM1IiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiRjBfUElUdUQzRnlEY292dzIzMlplT29OIiwic2NvcGUiOiIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.PV2QmYCpOfdoAaXRj0XndutDh_jDGfk7R0DZm2kn1dvviSxm1FIvSk016C-MwXQ30nZi_t2vvdzUzxK2XC7pIw8uml6HKO1nOMye-K-k-a3h02sujLHmYiWwbguOJnU58PcLU_JdwXI8ahnW6XPaeWs2Ztmvn6rj92eAgRmOImqwBp40URZeq9_sNP55fVrQdkuffCNVP_Fr2gDjfNAIe27RZxUCNe7ujCKbojsnPYzzrSoCdiDpx_aC6j7aF9GlYM_A4_7_ijQbdylK-X9GrJzKLAZw-CMMxgcyEyLEQEdRrtWWPieRIZEUjO8EfuvvEEeZsE6Ge4BdEESiwhmNsg
+@accessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkXzZsS0FEenJGMXJ3TlUzbXpXVHlBalJwdGxuU0JqaEVRbWpzR2dvQm5BIn0.eyJleHAiOjE3NzA5MDM0NTMsImlhdCI6MTc3MDkwMjg1MywianRpIjoib25ydHJvOjRkYjNkYzYyLTZmNGQtODE2OC1lZTc5LTY2NGUzYTUxODFmZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJzdWIiOiJlNjMwYTIyNS0wYzA5LTQ3ODAtOTlhMS03NjE5YTA5MTNmODAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJ2d0Z1VzNVamdSNU1vU193N1l6VUlTZlIiLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgYXBpLWF1ZGllbmNlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.AQ1KzVC4s2yeAlFbcjT0EZLukbxVK4T1JZpx32e8IQR2EygIq6fb9N1FYmierM-gQYdnT6X2yC_ZP793fbhghfa6nqj1VQymKr0EXejZv4wBangoVD4zXWt4V5XSa-_z_C39wpCtywqIe1jzF03GUAJibmniFr5ell_8fO4k6_dsGXjKhgkhXSQNHA_40Q-l_WldZwqrwcx_vBhMT5T3lKVCi7n2r381NsldtPYDCZH8-HMChhDnxj0Bj1OAw8sSF3sus4TUuxA1TAh0arRwNLxiFDFwdXT1ZqDbwik3ra_UJ8vWGFKlacsS6vuT6GxPe6Umi8Je9rdmlJ5J38jvhA
 GET {{Poc.Yarp_HostAddress}}/weatherforecast
 Accept: application/json
 Authorization: Bearer {{accessToken}}
 
 ###
+
+@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkXzZsS0FEenJGMXJ3TlUzbXpXVHlBalJwdGxuU0JqaEVRbWpzR2dvQm5BIn0.eyJleHAiOjE3NzA5MDM0NTMsImlhdCI6MTc3MDkwMjg1MywianRpIjoib25ydHJvOjRkYjNkYzYyLTZmNGQtODE2OC1lZTc5LTY2NGUzYTUxODFmZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJzdWIiOiJlNjMwYTIyNS0wYzA5LTQ3ODAtOTlhMS03NjE5YTA5MTNmODAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJ2d0Z1VzNVamdSNU1vU193N1l6VUlTZlIiLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgYXBpLWF1ZGllbmNlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.AQ1KzVC4s2yeAlFbcjT0EZLukbxVK4T1JZpx32e8IQR2EygIq6fb9N1FYmierM-gQYdnT6X2yC_ZP793fbhghfa6nqj1VQymKr0EXejZv4wBangoVD4zXWt4V5XSa-_z_C39wpCtywqIe1jzF03GUAJibmniFr5ell_8fO4k6_dsGXjKhgkhXSQNHA_40Q-l_WldZwqrwcx_vBhMT5T3lKVCi7n2r381NsldtPYDCZH8-HMChhDnxj0Bj1OAw8sSF3sus4TUuxA1TAh0arRwNLxiFDFwdXT1ZqDbwik3ra_UJ8vWGFKlacsS6vuT6GxPe6Umi8Je9rdmlJ5J38jvhA
+
 
 #####################################################################################################################################################
 # TOKEN EXCHANGE TESTS (RFC 8693)
@@ -59,11 +54,13 @@ Authorization: Bearer {{accessToken}}
 
 # Copy the access_token from Step 1 response and paste it below
 # IMPORTANT: Decode this token at https://jwt.io and verify it has ONLY "aud": ["bff"]
-@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkXzZsS0FEenJGMXJ3TlUzbXpXVHlBalJwdGxuU0JqaEVRbWpzR2dvQm5BIn0.eyJleHAiOjE3NzA2NjM2MDQsImlhdCI6MTc3MDY2MzAwNCwianRpIjoib25ydHJvOmU0ZDhiZTk5LWE1NDQtM2ZiZi04NTY3LTY3YmQxOWEzOTQ1OCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJzdWIiOiJlNjMwYTIyNS0wYzA5LTQ3ODAtOTlhMS03NjE5YTA5MTNmODAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiI0QmlnS1M2YWVMUkZiY0hIR0laeEs3MEgiLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgYXBpLWF1ZGllbmNlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.j9O2iiUkB4Lh5hMnAEMqaLngLicI44zio8fcycbVqJ1sXO_XahwN0hqhXA-omY5kWpRomPVI0JnV4irLqE77aIFDipJ-DzIjjO8WzZvI9kok4mgML2IvGI5jMNWLaL3rK2RKF_Yy0iSrl-TDzv1zugWBaqqdYDWjebiwJ1jQhPDUZvezDEbVCnonnCzkm_sydcwNH5gP7cbOkGASmQ8J6dPw8AaSlObTVhYpBJo17y8bZNu_tXGHXtRTds_aewg5ot9XTMAuQ7xRQhcfzdlOTcBQ7J753VjTpenxBcfMm9Guv47c_dOXgKqis-czDscScvU8mcnoYhFGgUdEv0o9-Q
+
 
 ### Step 2: Token Exchange - Basic (Same subject, no audience)
 # This exchanges the BFF token for another BFF token (same audience)
 # USE CASE: Refresh or get a new token with same permissions
+#####################################################################################################################################################
+
 POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
