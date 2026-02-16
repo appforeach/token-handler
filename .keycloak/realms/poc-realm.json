@@ -28,7 +28,8 @@
           "config": {
             "included.client.audience": "api",
             "id.token.claim": "false",
-            "access.token.claim": "true"
+            "access.token.claim": "true",
+            "included.custom.audience": ""
           }
         }
       ]
@@ -167,7 +168,8 @@
       },
       "defaultClientScopes": [
         "email",
-        "profile"
+        "profile",
+        "api-audience"
       ],
       "optionalClientScopes": [
         "address",
@@ -262,11 +264,14 @@
       },
       "defaultClientScopes": [
         "email",
-        "profile",
-        "api-audience"
+        "profile"
       ],
       "optionalClientScopes": [
-        
+        "api-audience",
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
       ],
       "protocolMappers": [
         {
