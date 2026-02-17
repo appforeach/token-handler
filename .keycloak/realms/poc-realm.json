@@ -35,6 +35,29 @@
       ]
     },
     {
+      "name": "internalapi-audience",
+      "description": "Internal API Audience Scope for token exchange",
+      "protocol": "openid-connect",
+      "attributes": {
+        "include.in.token.scope": "true",
+        "display.on.consent.screen": "false"
+      },
+      "protocolMappers": [
+        {
+          "name": "internalapi-audience",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "internalapi",
+            "id.token.claim": "false",
+            "access.token.claim": "true",
+            "included.custom.audience": ""
+          }
+        }
+      ]
+    },
+    {
       "name": "email",
       "description": "OpenID Connect built-in scope: email",
       "protocol": "openid-connect",
@@ -172,6 +195,7 @@
         "api-audience"
       ],
       "optionalClientScopes": [
+        "internalapi-audience",
         "address",
         "phone",
         "offline_access",
@@ -353,12 +377,112 @@
       "attributes": {
         "oauth2.token.exchange.grant.enabled": "true"
       }
+    },
+    {
+      "clientId": "internalapi",
+      "enabled": true,
+      "clientAuthenticatorType": "client-secret",
+      "secret": "your-client-secret-here",
+      "publicClient": false,
+      "protocol": "openid-connect",
+      "redirectUris": [
+        "http://localhost:5200/*"
+      ],
+      "webOrigins": [
+        "http://localhost:5200"
+      ],
+      "standardFlowEnabled": true,
+      "implicitFlowEnabled": false,
+      "directAccessGrantsEnabled": true,
+      "serviceAccountsEnabled": true,
+      "authorizationServicesEnabled": true,
+      "attributes": {
+        "access.token.lifespan": "600",
+        "client.secret.creation.time": "1234567890",
+        "oauth2.token.exchange.grant.enabled": "true"
+      },
+      "defaultClientScopes": [
+        "email",
+        "profile",
+        "internalapi-audience"
+      ],
+      "optionalClientScopes": [
+        "address",
+        "phone",
+        "offline_access",
+        "microprofile-jwt"
+      ],
+      "authorizationSettings": {
+        "policyEnforcementMode": "ENFORCING",
+        "resources": [
+          {
+            "name": "Token Exchange Permission",
+            "type": "urn:internalapi:resources:token-exchange",
+            "ownerManagedAccess": false,
+            "uris": [],
+            "scopes": [
+              {
+                "name": "token-exchange"
+              }
+            ]
+          }
+        ],
+        "policies": [
+          {
+            "name": "api-client-policy",
+            "description": "Policy for api client",
+            "type": "client",
+            "logic": "POSITIVE",
+            "decisionStrategy": "UNANIMOUS",
+            "config": {
+              "clients": "[\"api\"]"
+            }
+          },
+          {
+            "name": "token-exchange-permission",
+            "description": "Permission for token exchange",
+            "type": "scope",
+            "logic": "POSITIVE",
+            "decisionStrategy": "AFFIRMATIVE",
+            "config": {
+              "resources": "[\"Token Exchange Permission\"]",
+              "scopes": "[\"token-exchange\"]",
+              "applyPolicies": "[\"api-client-policy\"]"
+            }
+          }
+        ],
+        "scopes": [
+          {
+            "name": "token-exchange",
+            "displayName": "token-exchange"
+          }
+        ]
+      },
+      "protocolMappers": [
+        {
+          "name": "audience-mapper",
+          "protocol": "openid-connect",
+          "protocolMapper": "oidc-audience-mapper",
+          "consentRequired": false,
+          "config": {
+            "included.client.audience": "internalapi",
+            "id.token.claim": "false",
+            "access.token.claim": "true"
+          }
+        }
+      ]
     }
   ],
   "clientScopeMappings": {
     "api": [
       {
         "client": "bff",
+        "roles": []
+      }
+    ],
+    "internalapi": [
+      {
+        "client": "api",
         "roles": []
       }
     ]

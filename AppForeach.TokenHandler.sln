@@ -35,6 +35,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "backup", "backup", "{12B7FE
 		.keycloak\backup\poc-realm-experimental-old.json = .keycloak\backup\poc-realm-experimental-old.json
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Poc.InternalApi", "samples\Poc.InternalApi\Poc.InternalApi.csproj", "{B5A52272-0A46-6A90-A185-0154F729982A}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -53,6 +55,10 @@ Global
 		{FF98C36D-7EF6-4B83-9DA5-62136EB090A7}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{FF98C36D-7EF6-4B83-9DA5-62136EB090A7}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{FF98C36D-7EF6-4B83-9DA5-62136EB090A7}.Release|Any CPU.Build.0 = Release|Any CPU
+		{B5A52272-0A46-6A90-A185-0154F729982A}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{B5A52272-0A46-6A90-A185-0154F729982A}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{B5A52272-0A46-6A90-A185-0154F729982A}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{B5A52272-0A46-6A90-A185-0154F729982A}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -64,6 +70,7 @@ Global
 		{04279663-B7B0-4DDA-890E-00941C396195} = {8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}
 		{1B8C585A-FD09-47B5-B2E4-948FD5C12D02} = {04279663-B7B0-4DDA-890E-00941C396195}
 		{12B7FE65-067B-4303-9CAA-C3DB32BCFA07} = {04279663-B7B0-4DDA-890E-00941C396195}
+		{B5A52272-0A46-6A90-A185-0154F729982A} = {18EAE7C8-2D17-47F8-84F8-A4DCD4635292}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {20CBA6E6-E25F-454F-ACD1-D7EBD635B2B3}

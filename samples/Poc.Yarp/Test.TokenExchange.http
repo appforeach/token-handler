@@ -35,7 +35,7 @@ Authorization: Bearer {{accessToken}}
 
 ###
 
-@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJkXzZsS0FEenJGMXJ3TlUzbXpXVHlBalJwdGxuU0JqaEVRbWpzR2dvQm5BIn0.eyJleHAiOjE3NzA5MDM0NTMsImlhdCI6MTc3MDkwMjg1MywianRpIjoib25ydHJvOjRkYjNkYzYyLTZmNGQtODE2OC1lZTc5LTY2NGUzYTUxODFmZSIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjpbImFwaSIsImJmZiJdLCJzdWIiOiJlNjMwYTIyNS0wYzA5LTQ3ODAtOTlhMS03NjE5YTA5MTNmODAiLCJ0eXAiOiJCZWFyZXIiLCJhenAiOiJiZmYiLCJzaWQiOiJ2d0Z1VzNVamdSNU1vU193N1l6VUlTZlIiLCJzY29wZSI6ImVtYWlsIHByb2ZpbGUgYXBpLWF1ZGllbmNlIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.AQ1KzVC4s2yeAlFbcjT0EZLukbxVK4T1JZpx32e8IQR2EygIq6fb9N1FYmierM-gQYdnT6X2yC_ZP793fbhghfa6nqj1VQymKr0EXejZv4wBangoVD4zXWt4V5XSa-_z_C39wpCtywqIe1jzF03GUAJibmniFr5ell_8fO4k6_dsGXjKhgkhXSQNHA_40Q-l_WldZwqrwcx_vBhMT5T3lKVCi7n2r381NsldtPYDCZH8-HMChhDnxj0Bj1OAw8sSF3sus4TUuxA1TAh0arRwNLxiFDFwdXT1ZqDbwik3ra_UJ8vWGFKlacsS6vuT6GxPe6Umi8Je9rdmlJ5J38jvhA
+@adminAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRc2lNd2xFaG5kQ0doS2tteWd6d1NRNHhNOU1UVmY3STBoamhEV3dzbVpVIn0.eyJleHAiOjE3NzEzMzY5MDksImlhdCI6MTc3MTMzNjMwOSwianRpIjoib25ydHJvOjA2MmE0NWFiLTg3MDQtOTI5ZS0yNjhhLWIzZjA1YTg5ZjIwNyIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYmZmIiwic3ViIjoiZmVmY2U0MGQtNjlkZS00NTEwLWFkZWEtZGJjYWNjYzBmYWQzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiWnpwMkVoWDhqSWhQX0lPbUs3VTVIZ1ItIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIiwiZW1haWxfdmVyaWZpZWQiOnRydWUsIm5hbWUiOiJBZG1pbiBVc2VyIiwicHJlZmVycmVkX3VzZXJuYW1lIjoiYWRtaW4iLCJnaXZlbl9uYW1lIjoiQWRtaW4iLCJmYW1pbHlfbmFtZSI6IlVzZXIiLCJlbWFpbCI6ImFkbWluQGV4YW1wbGUuY29tIn0.zikBNjIx1L9e1mEyYqSOPryy_Fs60eNSCdxqIgHs7Xtc1mYp4MuoCBl4NFGDjgP-uYF8vAiiSh4pa37nRlJt95HZqfj8TGPA-PQSxh6pXQjAPALkkzCZcdBXKW_XGUX_7IQckzsgSyBTj4ltQoky5Rx4QbgiJvnkf_v0FrL4oBN3VI6pynByexmVESteUPzq313T0xw4zDE2YBVg3gVoovFM43VTTVXjY97wFKiOoWqlKKMxMK0aBS6zNfMMnggixzVrwVRAVsiI-_0GT2CMofr-50SqDYOmtR2bywZgjroMFb1b_WTSCIxmCFhxtN70ffWAkbnLld7o_vtUugY7_g
 
 
 #####################################################################################################################################################
@@ -85,5 +85,56 @@ POST {{Poc.KeyCloak_TokenEndpoint}}
 Content-Type: application/x-www-form-urlencoded
 
 grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api&scope=api-audience
+
+###
+
+#####################################################################################################################################################
+# API TO INTERNALAPI TOKEN EXCHANGE
+# Similar pattern to BFF -> API, but now API -> InternalAPI
+# This demonstrates a multi-tier token exchange pattern for microservices
+#####################################################################################################################################################
+
+# Step 4: First get an API token (exchange BFF token for API token)
+# Copy the access_token from this response for use in the next step
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=bff&client_secret=your-client-secret-here&subject_token={{adminAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=api
+
+###
+
+# Paste the API access_token here (from Step 4 response)
+# IMPORTANT: Decode this token at https://jwt.io and verify it has "aud": ["api"]
+@apiAccessToken = eyJhbGciOiJSUzI1NiIsInR5cCIgOiAiSldUIiwia2lkIiA6ICJRc2lNd2xFaG5kQ0doS2tteWd6d1NRNHhNOU1UVmY3STBoamhEV3dzbVpVIn0.eyJleHAiOjE3NzEzMzY5NjcsImlhdCI6MTc3MTMzNjM2NywianRpIjoib25ydHRlOjZjZmE4Yzg0LWQ1MzItM2UwNS1mNmIxLTJmOGVlZDI2MDUzZCIsImlzcyI6Imh0dHA6Ly9sb2NhbGhvc3Q6ODA4MC9yZWFsbXMvcG9jIiwiYXVkIjoiYXBpIiwic3ViIjoiZmVmY2U0MGQtNjlkZS00NTEwLWFkZWEtZGJjYWNjYzBmYWQzIiwidHlwIjoiQmVhcmVyIiwiYXpwIjoiYmZmIiwic2lkIjoiWnpwMkVoWDhqSWhQX0lPbUs3VTVIZ1ItIiwic2NvcGUiOiJwcm9maWxlIGVtYWlsIGFwaS1hdWRpZW5jZSIsImVtYWlsX3ZlcmlmaWVkIjp0cnVlLCJuYW1lIjoiQWRtaW4gVXNlciIsInByZWZlcnJlZF91c2VybmFtZSI6ImFkbWluIiwiZ2l2ZW5fbmFtZSI6IkFkbWluIiwiZmFtaWx5X25hbWUiOiJVc2VyIiwiZW1haWwiOiJhZG1pbkBleGFtcGxlLmNvbSJ9.FslXLeq7iZwuMfPTWychFSe6fnrCU1rBeWXwAaN9jxKHpY7YdmOFbCTXeCtN8jSY_xA7AhC4eSqNJGPQU4Ug5mXg-pVdO2m7ju2tlGbojPfDqYHLRJ8VkWfdedA9O__qchHLMXADX58FpVSc90vZTYzM9bwxSL9iH-c-An3Wdr6v3UaDhjIxugpq1x4Zf2hHm1uv7AAB7lzm5eYJb87Bqzyzll6ejqBDm4cqWQdrZrJNv00TFf9Qvlbe8yBWWJFNFoDGbxhznYF1qp-wy_D8JrmXKaMbDNBGSLWH5g4ymPLcCqQt4tpVRo2t5Tl-v1m4KWcElBHD1kbLwIvxKHRPIA
+
+### Step 5: Token Exchange - API to InternalAPI
+# Exchange API token for InternalAPI token
+# USE CASE: API backend calling internal microservices
+# EXPECTED: Success, returns token with "aud": ["internalapi"]
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=api&client_secret=your-client-secret-here&subject_token={{apiAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=internalapi
+
+###
+
+### Step 5.1: Token Exchange with Explicit Scope (Alternative)
+# This also works and explicitly requests the internalapi-audience scope
+POST {{Poc.KeyCloak_TokenEndpoint}}
+Content-Type: application/x-www-form-urlencoded
+
+grant_type=urn:ietf:params:oauth:grant-type:token-exchange&client_id=api&client_secret=your-client-secret-here&subject_token={{apiAccessToken}}&subject_token_type=urn:ietf:params:oauth:token-type:access_token&requested_token_type=urn:ietf:params:oauth:token-type:access_token&audience=internalapi&scope=internalapi-audience
+
+###
+
+@Poc.InternalApi_HostAddress = http://localhost:5200
+
+### Step 6: Call InternalData API with exchanged token
+# Copy the access_token from Step 5 response
+@internalApiAccessToken = YOUR_INTERNALAPI_TOKEN_HERE
+
+GET {{Poc.InternalApi_HostAddress}}/internaldata
+Accept: application/json
+Authorization: Bearer {{internalApiAccessToken}}
 
 ###
