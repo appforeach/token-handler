@@ -1,5 +1,5 @@
+using AppForeach.TokenHandler.Services;
 using System.Net.Http.Headers;
-using System.Text.Json;
 using Yarp.ReverseProxy.Transforms;
 
 namespace Poc.Yarp;
@@ -9,12 +9,15 @@ public class TokenExchangeTransform : RequestTransform
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _configuration;
     private readonly ILogger<TokenExchangeTransform> _logger;
+    private readonly ITokenExchangeService _tokenExchangeService;
 
     public TokenExchangeTransform(
+        ITokenExchangeService tokenExchangeService,
         IHttpClientFactory httpClientFactory,
         IConfiguration configuration,
         ILogger<TokenExchangeTransform> logger)
     {
+        _tokenExchangeService = tokenExchangeService;
         _httpClientFactory = httpClientFactory;
         _configuration = configuration;
         _logger = logger;
@@ -30,10 +33,12 @@ public class TokenExchangeTransform : RequestTransform
         }
 
         var subjectToken = authHeader.Substring("Bearer ".Length);
+        //var resourceUrl = context.ProxyRequest.RequestUri?.ToString() ?? string.Empty;
+        var resourceUrl = context.DestinationPrefix;// context.HttpContext.Request.Path.Value?.ToString() ?? string.Empty;
 
         try
         {
-            var newToken = await ExchangeTokenAsync(subjectToken);
+            var newToken = await ExchangeTokenAsync(resourceUrl, subjectToken);
 
             if (!string.IsNullOrEmpty(newToken))
             {
@@ -49,44 +54,10 @@ public class TokenExchangeTransform : RequestTransform
         }
     }
 
-    private async Task<string?> ExchangeTokenAsync(string subjectToken)
+    private async Task<string?> ExchangeTokenAsync(string resourceUrl, string subjectToken)
     {
-        var keycloakUrl = _configuration["Keycloak:Url"];
-        var realm = _configuration["Keycloak:Realm"];
-        var clientId = _configuration["Keycloak:ClientId"];
-        var clientSecret = _configuration["Keycloak:ClientSecret"];
-        var targetAudience = "api";
+        var result = await _tokenExchangeService.ExchangeForResourceAsync(subjectToken, resourceUrl);
 
-        var tokenEndpoint = $"{keycloakUrl}/realms/{realm}/protocol/openid-connect/token";
-
-        var httpClient = _httpClientFactory.CreateClient();
-
-        var requestBody = new Dictionary<string, string>
-        {
-            ["grant_type"] = "urn:ietf:params:oauth:grant-type:token-exchange",
-            ["client_id"] = clientId,
-            ["client_secret"] = clientSecret,
-            ["subject_token"] = subjectToken,
-            ["subject_token_type"] = "urn:ietf:params:oauth:token-type:access_token",
-            ["audience"] = targetAudience,
-            ["requested_token_type"] = "urn:ietf:params:oauth:token-type:access_token"
-        };
-
-        var response = await httpClient.PostAsync(
-            tokenEndpoint,
-            new FormUrlEncodedContent(requestBody));
-
-        response.EnsureSuccessStatusCode();
-
-        var content = await response.Content.ReadAsStringAsync();
-        var tokenResponse = JsonSerializer.Deserialize<TokenExchangeResponse>(content);
-
-        return tokenResponse?.AccessToken;
-    }
-
-    private class TokenExchangeResponse
-    {
-        [System.Text.Json.Serialization.JsonPropertyName("access_token")]
-        public string? AccessToken { get; set; }
+        return result.IsSuccess ? result.AccessToken : null;
     }
 }

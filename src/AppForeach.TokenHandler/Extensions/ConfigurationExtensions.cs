@@ -1,5 +1,6 @@
 ﻿using AppForeach.TokenHandler.Controllers;
 using AppForeach.TokenHandler.Middleware;
+using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -34,6 +35,11 @@ public static class ConfigurationExtensions
         services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
         services.AddHybridCache();
 
+        // Register HTTP client for token exchange
+        services.AddHttpClient("TokenExchange");
+
+        // Register token exchange service
+        services.AddScoped<ITokenExchangeService, TokenExchangeService>();
 
         services.AddAuthentication(options =>
         {
