@@ -26,6 +26,13 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 // Add authorization services
 builder.Services.AddAuthorization();
 
+// Configure HttpClient for InternalApi
+builder.Services.AddHttpClient("InternalApi", client =>
+{
+    var baseUrl = builder.Configuration["InternalApi:BaseUrl"] ?? "http://localhost:5200";
+    client.BaseAddress = new Uri(baseUrl);
+});
+
 // Add controllers middleware
 builder.Services.AddControllers();
 
