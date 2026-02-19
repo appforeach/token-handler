@@ -41,15 +41,15 @@ public class TokenExchangeService : ITokenExchangeService
         }
 
         var audience = ExtractAudienceFromResourceUrl(resourceUrl);
-        var defaultScop = $"{audience}-audience";
+        var defaultScope = $"{audience}-audience";
 
         // TODO:  obtain audience from resource URL or configuration if needed, for now we will use a fixed audience
         var request = new TokenExchangeRequest
         {
             SubjectToken = subjectToken,
             Resource = resourceUrl,
-            Audience = "api",
-            Scopes = scopes ?? new[] { defaultScop }
+            Audience = audience,
+            Scopes = scopes ?? new[] { defaultScope }
         };
 
         return await ExecuteTokenExchangeAsync(request, cancellationToken);
@@ -61,7 +61,13 @@ public class TokenExchangeService : ITokenExchangeService
         try
         {
             var uri = new Uri(resourceUrl);
-            //return uri.Host;
+
+            //TODO: extract to configuration based mapping if needed, for now we will use a simple heuristic
+            if (uri.AbsoluteUri.Contains("http://localhost:5149", StringComparison.OrdinalIgnoreCase))
+                return "api";
+
+            if (uri.AbsoluteUri.Contains("http://localhost:5200", StringComparison.OrdinalIgnoreCase))
+                return "internalapi";
 
             return "api";
         }
@@ -182,7 +188,7 @@ public class TokenExchangeService : ITokenExchangeService
             ["subject_token_type"] = request.SubjectTokenType,
             ["requested_token_type"] = request.RequestedTokenType
         };
-         
+
         // Add resource (for resource-based exchange) TODO: figure out this
         if (!string.IsNullOrEmpty(request.Resource))
         {

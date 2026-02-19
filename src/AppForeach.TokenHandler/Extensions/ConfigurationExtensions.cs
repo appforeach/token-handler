@@ -14,6 +14,13 @@ namespace AppForeach.TokenHandler.Extensions;
 public static class ConfigurationExtensions
 {
     public static string AuthenticationCookieName = "session-id";
+
+    public static IServiceCollection AddTokenExchangeDelegatingHandler(this IServiceCollection services)
+    {
+        services.AddScoped<ITokenExchangeService, TokenExchangeService>();
+        services.AddTransient<TokenExchangeDelegatingHandler>();
+        return services;
+    }
     public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
     {
         var tokenHandlerOptions = TokenHandlerOptions.Default;
@@ -36,10 +43,12 @@ public static class ConfigurationExtensions
         services.AddHybridCache();
 
         // Register HTTP client for token exchange
-        services.AddHttpClient("TokenExchange");
+        services.AddHttpClient("TokenExchange")
+                .AddHttpMessageHandler<TokenExchangeDelegatingHandler>();
 
         // Register token exchange service
         services.AddScoped<ITokenExchangeService, TokenExchangeService>();
+        services.AddTransient<TokenExchangeDelegatingHandler>();
 
         services.AddAuthentication(options =>
         {
