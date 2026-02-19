@@ -19,6 +19,7 @@ public static class ConfigurationExtensions
     {
         services.AddScoped<ITokenExchangeService, TokenExchangeService>();
         services.AddTransient<TokenExchangeDelegatingHandler>();
+        services.AddHttpContextAccessor();
         return services;
     }
     public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
@@ -41,13 +42,13 @@ public static class ConfigurationExtensions
         services.AddMemoryCache();
         services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
         services.AddHybridCache();
+        services.AddHttpContextAccessor();
 
         // Register HTTP client for token exchange
-        services.AddHttpClient("TokenExchange")
-                .AddHttpMessageHandler<TokenExchangeDelegatingHandler>();
+        services.AddHttpClient("TokenExchange");
 
         // Register token exchange service
-        services.AddScoped<ITokenExchangeService, TokenExchangeService>();
+        services.AddTransient<ITokenExchangeService, TokenExchangeService>();
         services.AddTransient<TokenExchangeDelegatingHandler>();
 
         services.AddAuthentication(options =>
@@ -111,10 +112,10 @@ public static class ConfigurationExtensions
                    var httpContext = context.HttpContext;
                    httpContext.Response.Cookies.Append(AuthenticationCookieName, sessionId, new CookieOptions
                    {
-                        HttpOnly = true, 
-                        Secure = true, 
-                        // SameSite = SameSiteMode.Strict,
-                        // Expires = DateTimeOffset.UtcNow.AddHours(1)
+                       HttpOnly = true,
+                       Secure = true,
+                       // SameSite = SameSiteMode.Strict,
+                       // Expires = DateTimeOffset.UtcNow.AddHours(1)
                    });
 
 

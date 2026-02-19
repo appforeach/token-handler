@@ -8,31 +8,25 @@ namespace Poc.Api.Controllers;
 [Authorize]
 public class InternalDataProxyController : ControllerBase
 {
-    private readonly HttpClient _httpClient;
+    private readonly IHttpClientFactory _httpClientFactory;
     private readonly ILogger<InternalDataProxyController> _logger;
 
     public InternalDataProxyController(IHttpClientFactory httpClientFactory, ILogger<InternalDataProxyController> logger)
     {
-        _httpClient = httpClientFactory.CreateClient("InternalApi");
+        _httpClientFactory = httpClientFactory;
         _logger = logger;
     }
 
     [HttpGet]
     public async Task<IActionResult> Get()
     {
+        using var httpClient = _httpClientFactory.CreateClient("InternalApi");
         _logger.LogInformation("Proxying request to InternalData API");
 
         try
         {
-            // Forward the authorization header to the internal API
-            if (Request.Headers.TryGetValue("Authorization", out var authHeader))
-            {
-                _httpClient.DefaultRequestHeaders.Authorization = 
-                    System.Net.Http.Headers.AuthenticationHeaderValue.Parse(authHeader.ToString());
-            }
+            var response = await httpClient.GetAsync("InternalData");
 
-            var response = await _httpClient.GetAsync("InternalData");
-            
             if (response.IsSuccessStatusCode)
             {
                 var content = await response.Content.ReadAsStringAsync();

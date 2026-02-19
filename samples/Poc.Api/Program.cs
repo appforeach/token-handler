@@ -43,7 +43,7 @@ builder.Services.AddTokenExchangeDelegatingHandler();
 // Configure HttpClient for InternalApi
 builder.Services.AddHttpClient("InternalApi", client =>
 {
-    var baseUrl = builder.Configuration["InternalApi:BaseUrl"] ?? "http://localhost:5200";
+    var baseUrl = builder.Configuration["InternalApi:BaseUrl"] ?? "https://localhost:7200";
     client.BaseAddress = new Uri(baseUrl);
 }).AddHttpMessageHandler<TokenExchangeDelegatingHandler>(); ;
 

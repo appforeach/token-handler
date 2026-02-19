@@ -386,10 +386,10 @@
       "publicClient": false,
       "protocol": "openid-connect",
       "redirectUris": [
-        "http://localhost:5200/*"
+        "https://localhost:7200/*"
       ],
       "webOrigins": [
-        "http://localhost:5200"
+        "https://localhost:7200"
       ],
       "standardFlowEnabled": true,
       "implicitFlowEnabled": false,

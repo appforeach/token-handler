@@ -66,7 +66,7 @@ public class TokenExchangeService : ITokenExchangeService
             if (uri.AbsoluteUri.Contains("http://localhost:5149", StringComparison.OrdinalIgnoreCase))
                 return "api";
 
-            if (uri.AbsoluteUri.Contains("http://localhost:5200", StringComparison.OrdinalIgnoreCase))
+            if (uri.AbsoluteUri.Contains("https://localhost:7200", StringComparison.OrdinalIgnoreCase))
                 return "internalapi";
 
             return "api";
