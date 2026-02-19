@@ -182,12 +182,12 @@ public class TokenExchangeService : ITokenExchangeService
             ["subject_token_type"] = request.SubjectTokenType,
             ["requested_token_type"] = request.RequestedTokenType
         };
-
-        // Add resource (for resource-based exchange)
-        //if (!string.IsNullOrEmpty(request.Resource))
-        //{
-        //    body["resource"] = request.Resource;
-        //}
+         
+        // Add resource (for resource-based exchange) TODO: figure out this
+        if (!string.IsNullOrEmpty(request.Resource))
+        {
+            body["resource"] = request.Resource;
+        }
 
         // Add audience (for audience-based exchange)
         if (!string.IsNullOrEmpty(request.Audience))
