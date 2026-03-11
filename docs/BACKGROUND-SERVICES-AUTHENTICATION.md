@@ -255,22 +255,22 @@ public class MyBackgroundService : BackgroundService
         _logger = logger;
     }
 
-    protected override async Task ExecuteAsync(CancellationToken stoppingToken)
+    protected override async Task ExecuteAsync(CancellationToken cancellationToken)
     {
-        while (!stoppingToken.IsCancellationRequested)
+        while (!cancellationToken.IsCancellationRequested)
         {
             try
             {
                 // Get a token for the "api" audience
                 var tokenResult = await _tokenService.GetAccessTokenAsync(
                     audience: "api",
-                    cancellationToken: stoppingToken);
+                    cancellationToken: cancellationToken);
 
                 if (!tokenResult.IsSuccess)
                 {
                     _logger.LogError("Failed to get token: {Error} - {Description}",
                         tokenResult.Error, tokenResult.ErrorDescription);
-                    await Task.Delay(TimeSpan.FromSeconds(30), stoppingToken);
+                    await Task.Delay(TimeSpan.FromSeconds(30), cancellationToken);
                     continue;
                 }
 
@@ -279,8 +279,8 @@ public class MyBackgroundService : BackgroundService
                 httpClient.DefaultRequestHeaders.Authorization = 
                     new System.Net.Http.Headers.AuthenticationHeaderValue("Bearer", tokenResult.AccessToken);
 
-                var response = await httpClient.GetAsync("http://localhost:5149/weatherforecast", stoppingToken);
-                var content = await response.Content.ReadAsStringAsync(stoppingToken);
+                var response = await httpClient.GetAsync("http://localhost:5149/weatherforecast", cancellationToken);
+                var content = await response.Content.ReadAsStringAsync(cancellationToken);
                 
                 _logger.LogInformation("API Response: {Content}", content);
             }
@@ -289,7 +289,7 @@ public class MyBackgroundService : BackgroundService
                 _logger.LogError(ex, "Error in background service");
             }
 
-            await Task.Delay(TimeSpan.FromMinutes(1), stoppingToken);
+            await Task.Delay(TimeSpan.FromMinutes(1), cancellationToken);
         }
     }
 }
