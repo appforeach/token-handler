@@ -1,7 +1,9 @@
+using AppForeach.TokenHandler.Extensions;
+using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
+using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
-using Microsoft.AspNetCore.Http;
-using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -25,8 +27,25 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
         };
     });
 
+builder.Services.Configure<OpenIdConnectOptions>("oidc", options =>
+{
+    options.Authority = builder.Configuration.GetValue<string>("Keycloak:Authority");
+
+    options.ClientId = builder.Configuration.GetValue<string>("Keycloak:ClientId");
+    options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret");
+});
+
 // Add authorization services
-builder.Services.AddAuthorization();
+//builder.Services.AddAuthorization();
+
+builder.Services.AddTokenExchangeDelegatingHandler();
+
+// Configure HttpClient for InternalApi
+builder.Services.AddHttpClient("InternalApi", client =>
+{
+    var baseUrl = builder.Configuration["InternalApi:BaseUrl"] ?? "https://localhost:7200";
+    client.BaseAddress = new Uri(baseUrl);
+}).AddHttpMessageHandler<TokenExchangeDelegatingHandler>(); ;
 
 // Add controllers middleware
 builder.Services.AddControllers();

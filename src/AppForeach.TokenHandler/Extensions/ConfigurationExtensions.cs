@@ -1,5 +1,6 @@
 ﻿using AppForeach.TokenHandler.Controllers;
 using AppForeach.TokenHandler.Middleware;
+using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -13,6 +14,14 @@ namespace AppForeach.TokenHandler.Extensions;
 public static class ConfigurationExtensions
 {
     public static string AuthenticationCookieName = "session-id";
+
+    public static IServiceCollection AddTokenExchangeDelegatingHandler(this IServiceCollection services)
+    {
+        services.AddScoped<ITokenExchangeService, TokenExchangeService>();
+        services.AddTransient<TokenExchangeDelegatingHandler>();
+        services.AddHttpContextAccessor();
+        return services;
+    }
     public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
     {
         var tokenHandlerOptions = TokenHandlerOptions.Default;
@@ -33,7 +42,14 @@ public static class ConfigurationExtensions
         services.AddMemoryCache();
         services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
         services.AddHybridCache();
+        services.AddHttpContextAccessor();
 
+        // Register HTTP client for token exchange
+        services.AddHttpClient("TokenExchange");
+
+        // Register token exchange service
+        services.AddTransient<ITokenExchangeService, TokenExchangeService>();
+        services.AddTransient<TokenExchangeDelegatingHandler>();
 
         services.AddAuthentication(options =>
         {
@@ -96,10 +112,10 @@ public static class ConfigurationExtensions
                    var httpContext = context.HttpContext;
                    httpContext.Response.Cookies.Append(AuthenticationCookieName, sessionId, new CookieOptions
                    {
-                        HttpOnly = true, 
-                        Secure = true, 
-                        // SameSite = SameSiteMode.Strict,
-                        // Expires = DateTimeOffset.UtcNow.AddHours(1)
+                       HttpOnly = true,
+                       Secure = true,
+                       // SameSite = SameSiteMode.Strict,
+                       // Expires = DateTimeOffset.UtcNow.AddHours(1)
                    });
 
 
