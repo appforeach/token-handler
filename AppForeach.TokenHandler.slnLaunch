@@ -1,6 +1,6 @@
 [
   {
-    "Name": "api + yarp",
+    "Name": "api + internal api + yarp",
     "Projects": [
       {
         "Path": "samples\\Poc.Yarp\\Poc.Yarp.csproj",
@@ -8,6 +8,10 @@
       },
       {
         "Path": "samples\\Poc.Api\\Poc.Api.csproj",
+        "Action": "Start"
+      },
+      {
+        "Path": "samples\\Poc.InternalApi\\Poc.InternalApi.csproj",
         "Action": "Start"
       }
     ]
