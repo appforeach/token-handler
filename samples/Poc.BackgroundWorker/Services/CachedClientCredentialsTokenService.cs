@@ -1,16 +1,17 @@
-﻿using Microsoft.Extensions.Caching.Memory;
+﻿using System.Text.Json;
+using Microsoft.Extensions.Caching.Distributed;
 
 namespace Poc.BackgroundWorker.Services;
 
 public class CachedClientCredentialsTokenService : IClientCredentialsTokenService
 {
     private readonly IClientCredentialsTokenService _inner;
-    private readonly IMemoryCache _cache;
+    private readonly IDistributedCache _cache;
     private readonly ILogger<CachedClientCredentialsTokenService> _logger;
 
     public CachedClientCredentialsTokenService(
         IClientCredentialsTokenService inner,
-        IMemoryCache cache,
+        IDistributedCache cache,
         ILogger<CachedClientCredentialsTokenService> logger)
     {
         _inner = inner;
@@ -25,10 +26,11 @@ public class CachedClientCredentialsTokenService : IClientCredentialsTokenServic
     {
         var cacheKey = $"client_credentials:{audience ?? "default"}:{string.Join(",", scopes ?? [])}";
 
-        if (_cache.TryGetValue<ClientCredentialsResult>(cacheKey, out var cachedResult))
+        var cachedBytes = await _cache.GetAsync(cacheKey, cancellationToken);
+        if (cachedBytes is not null)
         {
             _logger.LogDebug("Using cached client credentials token");
-            return cachedResult!;
+            return JsonSerializer.Deserialize<ClientCredentialsResult>(cachedBytes)!;
         }
 
         var result = await _inner.GetAccessTokenAsync(audience, scopes, cancellationToken);
@@ -37,7 +39,11 @@ public class CachedClientCredentialsTokenService : IClientCredentialsTokenServic
         {
             // Cache for 80% of token lifetime to allow for clock skew
             var cacheTime = TimeSpan.FromSeconds(result.ExpiresIn.Value * 0.8);
-            _cache.Set(cacheKey, result, cacheTime);
+            var options = new DistributedCacheEntryOptions
+            {
+                AbsoluteExpirationRelativeToNow = cacheTime
+            };
+            await _cache.SetAsync(cacheKey, JsonSerializer.SerializeToUtf8Bytes(result), options, cancellationToken);
             _logger.LogDebug("Cached client credentials token for {Duration}", cacheTime);
         }
 
