@@ -185,7 +185,7 @@ info: Poc.BackgroundWorker.Workers.WeatherBackgroundService[0]
 
 **Solution:**
 1. Open Keycloak Admin Console
-2. Go to Clients ? `bff` ? Settings
+2. Go to Clients > `bff` > Settings
 3. Enable "Client authentication"
 4. Under "Authentication flow", check "Service accounts roles"
 

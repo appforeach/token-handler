@@ -412,7 +412,7 @@ public class CachedClientCredentialsTokenService : IClientCredentialsTokenServic
 
 ### Creating a Client for Background Services
 
-1. In Keycloak Admin Console, go to **Clients** ? **Create Client**
+1. In Keycloak Admin Console, go to **Clients** > **Create Client**
 2. Configure the client:
    - **Client ID**: `background-worker` (or your service name)
    - **Client authentication**: `ON` (enables client credentials)
