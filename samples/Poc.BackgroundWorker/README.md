@@ -25,14 +25,6 @@ sequenceDiagram
     end
 ```
 
-## Features
-
-- ? **Client Credentials Authentication** - Uses OAuth 2.0 Client Credentials Grant
-- ? **OpenIdConnectOptions Reuse** - Leverages existing OIDC configuration
-- ? **Periodic API Calls** - Configurable polling interval
-- ? **Comprehensive Logging** - Detailed logs for debugging and monitoring
-- ? **Error Handling** - Graceful error recovery and retry logic
-
 ## Configuration
 
 ### appsettings.json
@@ -135,18 +127,6 @@ httpClient.DefaultRequestHeaders.Authorization =
     new AuthenticationHeaderValue("Bearer", tokenResult.AccessToken);
 
 var response = await httpClient.GetAsync("http://localhost:5198/weatherforecast");
-```
-
-## Project Structure
-
-```
-Poc.BackgroundWorker/
-??? Program.cs                              # Service host configuration
-??? appsettings.json                        # Configuration
-??? Services/
-?   ??? ClientCredentialsTokenService.cs    # Token acquisition service
-??? Workers/
-    ??? WeatherBackgroundService.cs         # Background worker implementation
 ```
 
 ## Key Classes
