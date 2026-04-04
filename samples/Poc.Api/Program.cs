@@ -30,7 +30,6 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.Configure<OpenIdConnectOptions>("oidc", options =>
 {
     options.Authority = builder.Configuration.GetValue<string>("Keycloak:Authority");
-
     options.ClientId = builder.Configuration.GetValue<string>("Keycloak:ClientId");
     options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret");
 });
