@@ -6,13 +6,13 @@ using System.Net;
 
 namespace AppForeach.TokenHandler.Tests.Services;
 
-public class TokenExchageDelegatingHandlerTests
+public class TokenExchangeDelegatingHandlerTests
 {
     private readonly Mock<ITokenExchangeService> _tokenExchangeServiceMock;
     private readonly Mock<IHttpContextAccessor> _httpContextAccessorMock;
     private readonly Mock<HttpMessageHandler> _innerHandlerMock;
 
-    public TokenExchageDelegatingHandlerTests()
+    public TokenExchangeDelegatingHandlerTests()
     {
         _tokenExchangeServiceMock = new Mock<ITokenExchangeService>();
         _httpContextAccessorMock = new Mock<IHttpContextAccessor>();
