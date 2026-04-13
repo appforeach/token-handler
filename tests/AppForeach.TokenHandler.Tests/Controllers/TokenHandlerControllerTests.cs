@@ -35,10 +35,10 @@ public class TokenHandlerControllerTests
     }
 
     [Fact]
-    public void Athorize_WithDefaultReturnUrl_ReturnsChallengeResult()
+    public void Authorize_WithDefaultReturnUrl_ReturnsChallengeResult()
     {
         // Act
-        var result = _controller.Athorize();
+        var result = _controller.Authorize();
 
         // Assert
         var challengeResult = Assert.IsType<ChallengeResult>(result);
@@ -47,13 +47,13 @@ public class TokenHandlerControllerTests
     }
 
     [Fact]
-    public void Athorize_WithCustomReturnUrl_ReturnsChallengeResultWithCustomUrl()
+    public void Authorize_WithCustomReturnUrl_ReturnsChallengeResultWithCustomUrl()
     {
         // Arrange
         var customReturnUrl = "/custom/path";
 
         // Act
-        var result = _controller.Athorize(customReturnUrl);
+        var result = _controller.Authorize(customReturnUrl);
 
         // Assert
         var challengeResult = Assert.IsType<ChallengeResult>(result);
