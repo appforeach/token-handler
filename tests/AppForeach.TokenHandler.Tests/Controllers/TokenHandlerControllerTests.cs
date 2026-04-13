@@ -64,21 +64,6 @@ public class TokenHandlerControllerTests
     [Fact]
     public async Task Logout_SignsOutFromBothSchemes_ReturnsRedirect()
     {
-        // Arrange
-        _authenticationServiceMock
-            .Setup(x => x.SignOutAsync(
-                It.IsAny<HttpContext>(),
-                "Cookies",
-                null))
-            .Returns(Task.CompletedTask);
-
-        _authenticationServiceMock
-            .Setup(x => x.SignOutAsync(
-                It.IsAny<HttpContext>(),
-                "oidc",
-                It.Is<AuthenticationProperties>(p => p.RedirectUri == "/")))
-            .Returns(Task.CompletedTask);
-
         // Act
         var result = await _controller.Logout();
 
