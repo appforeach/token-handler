@@ -1,9 +1,10 @@
 ﻿using Microsoft.Extensions.Caching.Hybrid;
 
 namespace AppForeach.TokenHandler.Extensions;
+
 public static class HybridCacheExtensions
 {
-    public static async ValueTask<T?> GetOrDefautAsync<T>(this HybridCache cache, string key, T? defaultValue)
+    public static async ValueTask<T?> GetOrDefaultAsync<T>(this HybridCache cache, string key, T? defaultValue)
     {
         if (cache == null)
             throw new ArgumentNullException(nameof(cache));

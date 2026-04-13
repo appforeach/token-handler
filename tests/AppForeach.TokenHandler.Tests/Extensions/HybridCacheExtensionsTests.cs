@@ -1,13 +1,12 @@
 ﻿using AppForeach.TokenHandler.Extensions;
 using Microsoft.Extensions.Caching.Hybrid;
-using Moq;
 
 namespace AppForeach.TokenHandler.Tests.Extensions;
 
 public class HybridCacheExtensionsTests
 {
     [Fact]
-    public async Task GetOrDefautAsync_NullCache_ThrowsArgumentNullException()
+    public async Task GetOrDefaultAsync_NullCache_ThrowsArgumentNullException()
     {
         // Arrange
         HybridCache? cache = null;
@@ -16,11 +15,11 @@ public class HybridCacheExtensionsTests
 
         // Act & Assert
         await Assert.ThrowsAsync<ArgumentNullException>(async () =>
-            await cache!.GetOrDefautAsync(key, defaultValue));
+            await cache!.GetOrDefaultAsync(key, defaultValue));
     }
 
     [Fact]
-    public async Task GetOrDefautAsync_NullKey_ThrowsArgumentException()
+    public async Task GetOrDefaultAsync_NullKey_ThrowsArgumentException()
     {
         // Arrange
         var cache = new TestHybridCache();
@@ -29,12 +28,12 @@ public class HybridCacheExtensionsTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
-            await cache.GetOrDefautAsync(key!, defaultValue));
+            await cache.GetOrDefaultAsync(key!, defaultValue));
         Assert.Equal("key", exception.ParamName);
     }
 
     [Fact]
-    public async Task GetOrDefautAsync_EmptyKey_ThrowsArgumentException()
+    public async Task GetOrDefaultAsync_EmptyKey_ThrowsArgumentException()
     {
         // Arrange
         var cache = new TestHybridCache();
@@ -43,12 +42,12 @@ public class HybridCacheExtensionsTests
 
         // Act & Assert
         var exception = await Assert.ThrowsAsync<ArgumentException>(async () =>
-            await cache.GetOrDefautAsync(key, defaultValue));
+            await cache.GetOrDefaultAsync(key, defaultValue));
         Assert.Equal("key", exception.ParamName);
     }
 
     [Fact]
-    public async Task GetOrDefautAsync_ValidParameters_CallsGetOrCreateAsync()
+    public async Task GetOrDefaultAsync_ValidParameters_CallsGetOrCreateAsync()
     {
         // Arrange
         var cache = new TestHybridCache();
@@ -56,7 +55,7 @@ public class HybridCacheExtensionsTests
         var defaultValue = "test-value";
 
         // Act
-        var result = await cache.GetOrDefautAsync(key, defaultValue);
+        var result = await cache.GetOrDefaultAsync(key, defaultValue);
 
         // Assert
         Assert.Equal(defaultValue, result);
@@ -67,7 +66,7 @@ public class HybridCacheExtensionsTests
     }
 
     [Fact]
-    public async Task GetOrDefautAsync_WithIntValue_ReturnsDefaultValue()
+    public async Task GetOrDefaultAsync_WithIntValue_ReturnsDefaultValue()
     {
         // Arrange
         var cache = new TestHybridCache();
@@ -75,14 +74,14 @@ public class HybridCacheExtensionsTests
         var defaultValue = 42;
 
         // Act
-        var result = await cache.GetOrDefautAsync(key, defaultValue);
+        var result = await cache.GetOrDefaultAsync(key, defaultValue);
 
         // Assert
         Assert.Equal(defaultValue, result);
     }
 
     [Fact]
-    public async Task GetOrDefautAsync_NullDefaultValue_ReturnsNull()
+    public async Task GetOrDefaultAsync_NullDefaultValue_ReturnsNull()
     {
         // Arrange
         var cache = new TestHybridCache();
@@ -90,7 +89,7 @@ public class HybridCacheExtensionsTests
         string? defaultValue = null;
 
         // Act
-        var result = await cache.GetOrDefautAsync(key, defaultValue);
+        var result = await cache.GetOrDefaultAsync(key, defaultValue);
 
         // Assert
         Assert.Null(result);

@@ -38,7 +38,7 @@ public class AuthenticationHeaderSubstitutionMiddleware
                 authenticationHeader.Substring("Bearer ".Length).Trim() :
                 context.Request.Cookies[Extensions.ConfigurationExtensions.AuthenticationCookieName];
 
-            var tokenResponse = await _cache.GetOrDefautAsync<OpenIdConnectMessage>(sessionToken, default);
+            var tokenResponse = await _cache.GetOrDefaultAsync<OpenIdConnectMessage>(sessionToken, default);
 
             if (tokenResponse is not null)
             {

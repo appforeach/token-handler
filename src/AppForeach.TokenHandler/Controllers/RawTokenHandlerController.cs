@@ -66,7 +66,7 @@ public class RawTokenHandlerController : ControllerBase
     [HttpGet("callback")]
     public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state, [FromQuery] string? redirectUri = null)
     {
-        var codeVerifier = await _cache.GetOrDefautAsync($"pkce_{state}", default(string));
+        var codeVerifier = await _cache.GetOrDefaultAsync($"pkce_{state}", default(string));
 
         if (string.IsNullOrEmpty(codeVerifier))
             return BadRequest("Invalid PKCE state");
