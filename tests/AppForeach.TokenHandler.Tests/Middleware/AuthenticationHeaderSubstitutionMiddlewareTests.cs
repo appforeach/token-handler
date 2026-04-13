@@ -1,13 +1,15 @@
 ﻿using AppForeach.TokenHandler.Extensions;
 using AppForeach.TokenHandler.Middleware;
-using AppForeach.TokenHandler.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Moq;
+using Moq.Protected;
 using System.IdentityModel.Tokens.Jwt;
+using System.Net;
+using System.Text.Json;
 
 namespace AppForeach.TokenHandler.Tests.Middleware;
 
@@ -18,6 +20,9 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
     private readonly Mock<IConfiguration> _configMock;
     private readonly Mock<IOptions<TokenHandlerOptions>> _optionsMock;
     private readonly TokenHandlerOptions _tokenHandlerOptions;
+    private readonly Mock<HttpMessageHandler> _httpMessageHandlerMock;
+    private readonly HttpClient _httpClient;
+    private readonly Mock<IHttpClientFactory> _httpClientFactoryMock;
     private readonly AuthenticationHeaderSubstitutionMiddleware _middleware;
 
     public AuthenticationHeaderSubstitutionMiddlewareTests()
@@ -26,6 +31,7 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
         _cache = new TestHybridCache();
         _configMock = new Mock<IConfiguration>();
         _optionsMock = new Mock<IOptions<TokenHandlerOptions>>();
+        _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
 
         _tokenHandlerOptions = new TokenHandlerOptions
         {
@@ -36,11 +42,16 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
 
         _optionsMock.Setup(o => o.Value).Returns(_tokenHandlerOptions);
 
+        _httpClient = new HttpClient(_httpMessageHandlerMock.Object);
+        _httpClientFactoryMock = new Mock<IHttpClientFactory>();
+        _httpClientFactoryMock.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(_httpClient);
+
         _middleware = new AuthenticationHeaderSubstitutionMiddleware(
             _nextMock.Object,
             _cache,
             _optionsMock.Object,
-            _configMock.Object);
+            _configMock.Object,
+            _httpClientFactoryMock.Object);
     }
 
     [Fact]
@@ -51,6 +62,10 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
         var cacheMock = new TestHybridCache();
         var configMock = new Mock<IConfiguration>();
         var optionsMock = new Mock<IOptions<TokenHandlerOptions>>();
+        var handlerMock = new Mock<HttpMessageHandler>();
+        var httpClient = new HttpClient(handlerMock.Object);
+        var httpClientFactoryMock = new Mock<IHttpClientFactory>();
+        httpClientFactoryMock.Setup(f => f.CreateClient(It.IsAny<string>())).Returns(httpClient);
         optionsMock.Setup(o => o.Value).Returns(new TokenHandlerOptions());
 
         // Act
@@ -58,7 +73,8 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
             nextMock.Object,
             cacheMock,
             optionsMock.Object,
-            configMock.Object);
+            configMock.Object,
+            httpClientFactoryMock.Object);
 
         // Assert
         Assert.NotNull(middleware);
@@ -162,16 +178,57 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
         };
 
         _cache.SetValue(sessionToken, tokenResponse);
+        SetupHttpClientForFailedRefresh();
 
         // Act
         await _middleware.InvokeAsync(context);
 
         // Assert
         _nextMock.Verify(n => n(context), Times.Once);
+        _httpMessageHandlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>());
+
+        //Still should have the original token in the header since refresh failed
+        Assert.Equal($"Bearer {sessionToken}", context.Request.Headers["Authorization"].ToString());
     }
 
     [Fact]
-    public async Task InvokeAsync_WithTokenExpiringIn3Minutes_AttemptsRefresh()
+    public async Task InvokeAsync_WithTokenExpiringIn3Minutes_AttemptsRefreshAndSetsNewToken()
+    {
+        // Arrange
+        var context = new DefaultHttpContext();
+        var sessionToken = "session-token-123";
+        context.Request.Headers["Authorization"] = $"Bearer {sessionToken}";
+
+        var expiringToken = CreateJwtToken(DateTimeOffset.UtcNow.AddMinutes(3));
+        var newAccessToken = CreateJwtToken(DateTimeOffset.UtcNow.AddHours(1));
+        var tokenResponse = new OpenIdConnectMessage
+        {
+            AccessToken = expiringToken,
+            RefreshToken = "refresh-token"
+        };
+
+        _cache.SetValue(sessionToken, tokenResponse);
+        SetupHttpClientForSuccessfulRefresh(newAccessToken);
+
+        // Act
+        await _middleware.InvokeAsync(context);
+
+        // Assert
+        Assert.Equal($"Bearer {newAccessToken}", context.Request.Headers["Authorization"].ToString());
+        _nextMock.Verify(n => n(context), Times.Once);
+        _httpMessageHandlerMock.Protected().Verify(
+            "SendAsync",
+            Times.Once(),
+            ItExpr.IsAny<HttpRequestMessage>(),
+            ItExpr.IsAny<CancellationToken>());
+    }
+
+    [Fact]
+    public async Task InvokeAsync_WithTokenExpiringIn3Minutes_CallsNextWhenRefreshFails()
     {
         // Arrange
         var context = new DefaultHttpContext();
@@ -186,13 +243,16 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
         };
 
         _cache.SetValue(sessionToken, tokenResponse);
+        SetupHttpClientForFailedRefresh();
 
         // Act
         await _middleware.InvokeAsync(context);
 
-        // Assert - The middleware will attempt refresh but it will fail (no mock server)
-        // so the Authorization header won't be set with a refreshed token
+        // Assert
         _nextMock.Verify(n => n(context), Times.Once);
+
+        //Still should have the original token in the header since refresh failed
+        Assert.Equal($"Bearer {sessionToken}", context.Request.Headers["Authorization"].ToString());
     }
 
     [Fact]
@@ -275,6 +335,44 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
         // Assert
         Assert.Equal($"Bearer {validToken}", context.Request.Headers["Authorization"].ToString());
         _nextMock.Verify(n => n(context), Times.Once);
+    }
+
+    private void SetupHttpClientForSuccessfulRefresh(string newAccessToken, string newRefreshToken = "new-refresh-token")
+    {
+        var responseBody = JsonSerializer.Serialize(new
+        {
+            access_token = newAccessToken,
+            refresh_token = newRefreshToken,
+            token_type = "Bearer",
+            expires_in = 3600
+        });
+
+        _httpMessageHandlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.OK,
+                Content = new StringContent(responseBody, System.Text.Encoding.UTF8, "application/json")
+            });
+    }
+
+    private void SetupHttpClientForFailedRefresh()
+    {
+        _httpMessageHandlerMock
+            .Protected()
+            .Setup<Task<HttpResponseMessage>>(
+                "SendAsync",
+                ItExpr.IsAny<HttpRequestMessage>(),
+                ItExpr.IsAny<CancellationToken>())
+            .ReturnsAsync(new HttpResponseMessage
+            {
+                StatusCode = HttpStatusCode.BadRequest,
+                Content = new StringContent("{\"error\":\"invalid_grant\"}", System.Text.Encoding.UTF8, "application/json")
+            });
     }
 
     private static string CreateJwtToken(DateTimeOffset expiration)
