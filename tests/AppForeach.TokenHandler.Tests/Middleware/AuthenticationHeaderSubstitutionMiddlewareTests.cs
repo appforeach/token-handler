@@ -29,7 +29,6 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
     {
         _nextMock = new Mock<RequestDelegate>();
         _cache = new TestHybridCache();
-        _configMock = new Mock<IConfiguration>();
         _optionsMock = new Mock<IOptions<TokenHandlerOptions>>();
         _httpMessageHandlerMock = new Mock<HttpMessageHandler>();
 
@@ -50,7 +49,6 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
             _nextMock.Object,
             _cache,
             _optionsMock.Object,
-            _configMock.Object,
             _httpClientFactoryMock.Object);
     }
 
@@ -73,7 +71,6 @@ public class AuthenticationHeaderSubstitutionMiddlewareTests
             nextMock.Object,
             cacheMock,
             optionsMock.Object,
-            configMock.Object,
             httpClientFactoryMock.Object);
 
         // Assert

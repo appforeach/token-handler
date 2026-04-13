@@ -2,7 +2,6 @@
 using AppForeach.TokenHandler.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
@@ -13,17 +12,15 @@ public class AuthenticationHeaderSubstitutionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly HybridCache _cache;
-    private readonly IConfiguration _config;
     private readonly TokenHandlerOptions _tokenHandlerOptions;
     private readonly IHttpClientFactory _httpClientFactory;
 
     const string AuthenticationHeaderName = "Authorization";
 
-    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IConfiguration config, IHttpClientFactory httpClientFactory)
+    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IHttpClientFactory httpClientFactory)
     {
         _next = next;
         _cache = cacheService;
-        _config = config;
         _tokenHandlerOptions = options.Value;
         _httpClientFactory = httpClientFactory;
     }
