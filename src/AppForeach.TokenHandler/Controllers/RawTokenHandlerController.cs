@@ -1,18 +1,20 @@
+using AppForeach.TokenHandler.Extensions;
+using AppForeach.TokenHandler.Models;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
-using System.Text.Json;
-using System.Security.Cryptography;
-using System.Web;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.Configuration;
-using Microsoft.AspNetCore.Http;
-using AppForeach.TokenHandler.Models;
-using AppForeach.TokenHandler.Extensions;
+using System.Diagnostics.CodeAnalysis;
+using System.Security.Cryptography;
+using System.Text.Json;
+using System.Web;
 
 namespace AppForeach.TokenHandler.Controllers;
 
 [ApiController]
 [Route("[controller]")]
 [Obsolete("This direct oauth callback handler approach was applied as a first draft")]
+[ExcludeFromCodeCoverage]
 public class RawTokenHandlerController : ControllerBase
 {
     private readonly IHttpClientFactory _httpClientFactory;
@@ -64,7 +66,7 @@ public class RawTokenHandlerController : ControllerBase
     [HttpGet("callback")]
     public async Task<IActionResult> Callback([FromQuery] string code, [FromQuery] string state, [FromQuery] string? redirectUri = null)
     {
-        var codeVerifier = await _cache.GetOrDefautAsync($"pkce_{state}", default(string));
+        var codeVerifier = await _cache.GetOrDefaultAsync($"pkce_{state}", default(string));
 
         if (string.IsNullOrEmpty(codeVerifier))
             return BadRequest("Invalid PKCE state");
