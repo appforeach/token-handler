@@ -2,27 +2,27 @@
 using AppForeach.TokenHandler.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.Options;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using System.IdentityModel.Tokens.Jwt;
 
 namespace AppForeach.TokenHandler.Middleware;
+
 public class AuthenticationHeaderSubstitutionMiddleware
 {
     private readonly RequestDelegate _next;
     private readonly HybridCache _cache;
-    private readonly IConfiguration _config;
     private readonly TokenHandlerOptions _tokenHandlerOptions;
+    private readonly IHttpClientFactory _httpClientFactory;
 
     const string AuthenticationHeaderName = "Authorization";
 
-    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IConfiguration config)
+    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IHttpClientFactory httpClientFactory)
     {
         _next = next;
         _cache = cacheService;
-        _config = config;
         _tokenHandlerOptions = options.Value;
+        _httpClientFactory = httpClientFactory;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -35,7 +35,7 @@ public class AuthenticationHeaderSubstitutionMiddleware
                 authenticationHeader.Substring("Bearer ".Length).Trim() :
                 context.Request.Cookies[Extensions.ConfigurationExtensions.AuthenticationCookieName];
 
-            var tokenResponse = await _cache.GetOrDefautAsync<OpenIdConnectMessage>(sessionToken, default);
+            var tokenResponse = await _cache.GetOrDefaultAsync<OpenIdConnectMessage>(sessionToken, default);
 
             if (tokenResponse is not null)
             {
@@ -69,7 +69,7 @@ public class AuthenticationHeaderSubstitutionMiddleware
     {
         var tokenEndpoint = $"{_tokenHandlerOptions.Authority}/protocol/openid-connect/token";
 
-        using var httpClient = new HttpClient();
+        using var httpClient = _httpClientFactory.CreateClient();
         var request = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint)
         {
             Content = new FormUrlEncodedContent(new Dictionary<string, string>
