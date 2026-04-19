@@ -97,6 +97,12 @@ npm install
 npm run dev
 ```
 
+### Expiring Tokens Refresh Background Worker
+```bash
+cd src\AppForeach.TokenHandler.BackgroundWorker
+dotnet run
+```
+
 ## Architecture
 
 - Frontend (React + TypeScript) runs on port 3000

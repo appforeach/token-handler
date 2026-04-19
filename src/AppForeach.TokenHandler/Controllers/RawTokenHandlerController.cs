@@ -1,5 +1,6 @@
 using AppForeach.TokenHandler.Extensions;
 using AppForeach.TokenHandler.Models;
+using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -20,12 +21,14 @@ public class RawTokenHandlerController : ControllerBase
     private readonly IHttpClientFactory _httpClientFactory;
     private readonly IConfiguration _config;
     private readonly HybridCache _cache;
+    private readonly ITokenStorageService _tokenStorage;
 
-    public RawTokenHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache)
+    public RawTokenHandlerController(IHttpClientFactory httpClientFactory, IConfiguration config, HybridCache cache, ITokenStorageService tokenStorage)
     {
         _httpClientFactory = httpClientFactory;
         _config = config;
         _cache = cache;
+        _tokenStorage = tokenStorage;
     }
 
     // Init the PKCE flow
@@ -101,12 +104,20 @@ public class RawTokenHandlerController : ControllerBase
             PropertyNameCaseInsensitive = true
         });
 
-        tokenResponse.ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
-
         var sessionId = Guid.NewGuid().ToString();
         if (tokenResponse is not null)
         {
-            await _cache.SetAsync(sessionId, tokenResponse);
+            tokenResponse.ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
+
+            await _tokenStorage.StoreAsync(sessionId, new Microsoft.IdentityModel.Protocols.OpenIdConnect.OpenIdConnectMessage
+            {
+                AccessToken = tokenResponse.AccessToken,
+                RefreshToken = tokenResponse.RefreshToken,
+                IdToken = tokenResponse.IdToken,
+                TokenType = tokenResponse.TokenType,
+                Scope = tokenResponse.Scope,
+                ExpiresIn = tokenResponse.ExpiresIn.ToString()
+            });
 
             //TODO: discuss this;
             Response.Cookies.Append("session-id", sessionId, new CookieOptions { HttpOnly = false });
@@ -146,8 +157,8 @@ public class RawTokenHandlerController : ControllerBase
         var content = new FormUrlEncodedContent(new[]
         {
                 new KeyValuePair<string, string>("grant_type", "password"),
-                new KeyValuePair<string, string>("client_id", clientId),
-                new KeyValuePair<string, string>("client_secret", clientSecret),
+                new KeyValuePair<string, string>("client_id", clientId ?? string.Empty),
+                new KeyValuePair<string, string>("client_secret", clientSecret ?? string.Empty),
                 new KeyValuePair<string, string>("username", username),
                 new KeyValuePair<string, string>("password", password)
             });
