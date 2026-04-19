@@ -1,28 +1,24 @@
-﻿using AppForeach.TokenHandler.Extensions;
-using AppForeach.TokenHandler.Models;
+using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Hybrid;
-using Microsoft.Extensions.Options;
-using Microsoft.IdentityModel.Protocols.OpenIdConnect;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace AppForeach.TokenHandler.Middleware;
 
 public class AuthenticationHeaderSubstitutionMiddleware
 {
     private readonly RequestDelegate _next;
-    private readonly HybridCache _cache;
-    private readonly TokenHandlerOptions _tokenHandlerOptions;
-    private readonly IHttpClientFactory _httpClientFactory;
+    private readonly ITokenStorageService _tokenStorageService;
+    private readonly ITokenRefreshService _tokenRefreshService;
 
     const string AuthenticationHeaderName = "Authorization";
 
-    public AuthenticationHeaderSubstitutionMiddleware(RequestDelegate next, HybridCache cacheService, IOptions<TokenHandlerOptions> options, IHttpClientFactory httpClientFactory)
+    public AuthenticationHeaderSubstitutionMiddleware(
+        RequestDelegate next,
+        ITokenStorageService tokenStorageService,
+        ITokenRefreshService tokenRefreshService)
     {
         _next = next;
-        _cache = cacheService;
-        _tokenHandlerOptions = options.Value;
-        _httpClientFactory = httpClientFactory;
+        _tokenStorageService = tokenStorageService;
+        _tokenRefreshService = tokenRefreshService;
     }
 
     public async Task InvokeAsync(HttpContext context)
@@ -35,22 +31,23 @@ public class AuthenticationHeaderSubstitutionMiddleware
                 authenticationHeader.Substring("Bearer ".Length).Trim() :
                 context.Request.Cookies[Extensions.ConfigurationExtensions.AuthenticationCookieName];
 
-            var tokenResponse = await _cache.GetOrDefaultAsync<OpenIdConnectMessage>(sessionToken, default);
+            if (string.IsNullOrWhiteSpace(sessionToken))
+            {
+                await _next(context);
+                return;
+            }
+
+            var tokenResponse = await _tokenStorageService.GetAsync(sessionToken);
 
             if (tokenResponse is not null)
             {
-                var handler = new JwtSecurityTokenHandler();
-                var jwt = handler.ReadJwtToken(tokenResponse.AccessToken);
-
-                // Check if token is expired or about to expire (e.g., within 1 minute)
                 var now = DateTimeOffset.UtcNow;
-                if (jwt.ValidTo <= now.AddMinutes(4))
+                if (_tokenRefreshService.ShouldRefresh(tokenResponse, now))
                 {
-                    // Attempt to refresh the token
-                    var refreshedToken = await RefreshTokenAsync(tokenResponse.RefreshToken);
+                    var refreshedToken = await _tokenRefreshService.RefreshAsync(tokenResponse);
                     if (refreshedToken is not null)
                     {
-                        await _cache.SetAsync(sessionToken, new OpenIdConnectMessage() { AccessToken = refreshedToken.AccessToken, RefreshToken = refreshedToken.RefreshToken }, default);
+                        await _tokenStorageService.StoreAsync(sessionToken, refreshedToken);
                         context.Request.Headers[AuthenticationHeaderName] = $"Bearer {refreshedToken.AccessToken}";
                     }
                 }
@@ -62,41 +59,5 @@ public class AuthenticationHeaderSubstitutionMiddleware
         }
 
         await _next(context);
-    }
-
-    // Assumes you have a method to refresh the token using the refresh token
-    private async Task<OAuthTokenResponse?> RefreshTokenAsync(string refreshToken)
-    {
-        var tokenEndpoint = $"{_tokenHandlerOptions.Authority}/protocol/openid-connect/token";
-
-        using var httpClient = _httpClientFactory.CreateClient();
-        var request = new HttpRequestMessage(HttpMethod.Post, tokenEndpoint)
-        {
-            Content = new FormUrlEncodedContent(new Dictionary<string, string>
-            {
-                { "grant_type", "refresh_token" },
-                { "refresh_token", refreshToken },
-                { "client_id", _tokenHandlerOptions.ClientId },
-                { "client_secret", _tokenHandlerOptions.ClientSecret }
-            })
-        };
-
-        var response = await httpClient.SendAsync(request);
-        if (!response.IsSuccessStatusCode)
-            return null;
-
-        var json = await response.Content.ReadAsStringAsync();
-        var tokenResponse = System.Text.Json.JsonSerializer.Deserialize<OAuthTokenResponse>(json, new System.Text.Json.JsonSerializerOptions
-        {
-            PropertyNameCaseInsensitive = true
-        });
-
-        if (tokenResponse != null)
-        {
-            // Set the absolute expiration time
-            tokenResponse.ExpiresAt = DateTimeOffset.UtcNow.AddSeconds(tokenResponse.ExpiresIn);
-        }
-
-        return tokenResponse;
     }
 }
