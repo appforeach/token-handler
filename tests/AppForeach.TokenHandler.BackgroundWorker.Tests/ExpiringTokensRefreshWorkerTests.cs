@@ -55,7 +55,7 @@ public class ExpiringTokensRefreshWorkerTests
     }
 
     [Fact]
-    public async Task ExecuteAsync_CallsHandeAsync_WhenPollingIntervalIsValid()
+    public async Task ExecuteAsync_CallsHandleAsync_WhenPollingIntervalIsValid()
     {
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
@@ -65,7 +65,7 @@ public class ExpiringTokensRefreshWorkerTests
         using var cts = new CancellationTokenSource();
 
         mockService
-            .Setup(s => s.HandeAsync(It.IsAny<CancellationToken>()))
+            .Setup(s => s.HandleAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback(() => cts.Cancel());
 
@@ -75,7 +75,7 @@ public class ExpiringTokensRefreshWorkerTests
         await worker.StopAsync(CancellationToken.None);
 
         // Assert
-        mockService.Verify(s => s.HandeAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
+        mockService.Verify(s => s.HandleAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
     }
 
     [Fact]
@@ -89,7 +89,7 @@ public class ExpiringTokensRefreshWorkerTests
         using var cts = new CancellationTokenSource();
 
         mockService
-            .Setup(s => s.HandeAsync(It.IsAny<CancellationToken>()))
+            .Setup(s => s.HandleAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask);
 
         // Act
@@ -99,11 +99,11 @@ public class ExpiringTokensRefreshWorkerTests
         await worker.StopAsync(CancellationToken.None);
 
         // Assert
-        mockService.Verify(s => s.HandeAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
+        mockService.Verify(s => s.HandleAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
     }
 
     [Fact]
-    public async Task ExecuteAsync_CallsHandeAsyncMultipleTimes_WhenPollingIntervalElapses()
+    public async Task ExecuteAsync_CallsHandleAsyncMultipleTimes_WhenPollingIntervalElapses()
     {
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
@@ -114,7 +114,7 @@ public class ExpiringTokensRefreshWorkerTests
 
         var callCount = 0;
         mockService
-            .Setup(s => s.HandeAsync(It.IsAny<CancellationToken>()))
+            .Setup(s => s.HandleAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback(() =>
             {
@@ -132,11 +132,11 @@ public class ExpiringTokensRefreshWorkerTests
 
         // Assert
         Assert.True(callCount >= 3, $"Expected at least 3 calls, but got {callCount}");
-        mockService.Verify(s => s.HandeAsync(It.IsAny<CancellationToken>()), Times.AtLeast(3));
+        mockService.Verify(s => s.HandleAsync(It.IsAny<CancellationToken>()), Times.AtLeast(3));
     }
 
     [Fact]
-    public async Task ExecuteAsync_PassesCancellationToken_ToHandeAsync()
+    public async Task ExecuteAsync_PassesCancellationToken_ToHandleAsync()
     {
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
@@ -147,7 +147,7 @@ public class ExpiringTokensRefreshWorkerTests
 
         CancellationToken? receivedToken = null;
         mockService
-            .Setup(s => s.HandeAsync(It.IsAny<CancellationToken>()))
+            .Setup(s => s.HandleAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback<CancellationToken>(token =>
             {
@@ -169,7 +169,7 @@ public class ExpiringTokensRefreshWorkerTests
 
         // Assert
         Assert.NotNull(receivedToken);
-        mockService.Verify(s => s.HandeAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
+        mockService.Verify(s => s.HandleAsync(It.IsAny<CancellationToken>()), Times.AtLeastOnce());
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public class ExpiringTokensRefreshWorkerTests
 
         var callTimes = new List<DateTimeOffset>();
         mockService
-            .Setup(s => s.HandeAsync(It.IsAny<CancellationToken>()))
+            .Setup(s => s.HandleAsync(It.IsAny<CancellationToken>()))
             .Returns(Task.CompletedTask)
             .Callback(() =>
             {

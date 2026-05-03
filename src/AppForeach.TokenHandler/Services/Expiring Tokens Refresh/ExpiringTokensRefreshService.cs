@@ -7,7 +7,7 @@ internal class ExpiringTokensRefreshService(
     ITokenRefreshService tokenRefreshService,
     ILogger<ExpiringTokensRefreshService> logger) : IExpiringTokensRefreshService
 {
-    public async Task HandeAsync(CancellationToken cancellationToken)
+    public async Task HandleAsync(CancellationToken cancellationToken)
     {
         var now = DateTimeOffset.UtcNow;
         var sessionIds = await tokenStorageService.GetSessionIdsAsync(cancellationToken);

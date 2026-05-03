@@ -28,7 +28,7 @@ public class ExpiringTokensRefreshWorker : BackgroundService
 
         while (!stoppingToken.IsCancellationRequested)
         {
-            await _expiringSessionsRefreshService.HandeAsync(stoppingToken);
+            await _expiringSessionsRefreshService.HandleAsync(stoppingToken);
             await Task.Delay(_options.PollingInterval, stoppingToken);
         }
     }

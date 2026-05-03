@@ -2,5 +2,5 @@
 
 public interface IExpiringTokensRefreshService
 {
-    Task HandeAsync(CancellationToken cancellationToken);
+    Task HandleAsync(CancellationToken cancellationToken);
 }
