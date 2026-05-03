@@ -37,17 +37,17 @@ public class AuthenticationHeaderSubstitutionMiddleware
                 return;
             }
 
-            var tokenResponse = await _tokenStorageService.GetAsync(sessionToken);
+            var tokenResponse = await _tokenStorageService.GetAsync(sessionToken, context.RequestAborted);
 
             if (tokenResponse is not null)
             {
                 var now = DateTimeOffset.UtcNow;
                 if (_tokenRefreshService.ShouldRefresh(tokenResponse, now))
                 {
-                    var refreshedToken = await _tokenRefreshService.RefreshAsync(tokenResponse);
+                    var refreshedToken = await _tokenRefreshService.RefreshAsync(tokenResponse, context.RequestAborted);
                     if (refreshedToken is not null)
                     {
-                        await _tokenStorageService.StoreAsync(sessionToken, refreshedToken);
+                        await _tokenStorageService.StoreAsync(sessionToken, refreshedToken, context.RequestAborted);
                         context.Request.Headers[AuthenticationHeaderName] = $"Bearer {refreshedToken.AccessToken}";
                     }
                 }
