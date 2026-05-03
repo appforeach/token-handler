@@ -42,7 +42,16 @@ public static class ConfigurationExtensions
         });
 
         services.AddMemoryCache();
-        services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
+
+        //services.AddDistributedMemoryCache(); // For development/testing, replace with Redis in production
+
+        // Configure Redis as distributed cache
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = tokenHandlerOptions.RedisConnectionString ?? "localhost:6379";
+            options.InstanceName = "TokenHandler_";
+        });
+
         services.AddHybridCache();
         services.AddHttpClient(TokenExchangeHttpClientName);
         services.TryAddSingleton<ITokenStorageService, TokenStorageService>();
@@ -64,6 +73,7 @@ public static class ConfigurationExtensions
             options.ClientSecret = tokenHandlerOptions.ClientSecret;
             options.Realm = tokenHandlerOptions.Realm;
             options.RefreshBeforeExpirationInMinutes = tokenHandlerOptions.RefreshBeforeExpirationInMinutes;
+            options.RedisConnectionString = tokenHandlerOptions.RedisConnectionString;
         });
 
         services.AddHttpContextAccessor();

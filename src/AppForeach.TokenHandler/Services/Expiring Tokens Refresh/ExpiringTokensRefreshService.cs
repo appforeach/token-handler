@@ -11,31 +11,41 @@ internal class ExpiringTokensRefreshService(
     {
         var now = DateTimeOffset.UtcNow;
         var sessionIds = await tokenStorageService.GetSessionIdsAsync(cancellationToken);
+        logger.LogDebug("Found {SessionCount} sessions to check for token refresh.", sessionIds.Count);
+        logger.LogDebug("Session IDs to check for token refresh: {SessionIds}.", string.Join(",", sessionIds));
 
         foreach (var sessionId in sessionIds)
         {
-            var tokenResponse = await tokenStorageService.GetAsync(sessionId, cancellationToken);
-            if (tokenResponse is null)
+            try
             {
-                //do we need to remomve sessionId from index if tokenResponse is null? probably yes, to avoid trying to refresh every time.
-                await tokenStorageService.RemoveAsync(sessionId, cancellationToken);
-                continue;
-            }
+                var tokenResponse = await tokenStorageService.GetAsync(sessionId, cancellationToken);
+                if (tokenResponse is null)
+                {
+                    //do we need to remomve sessionId from index if tokenResponse is null? probably yes, to avoid trying to refresh every time.
+                    await tokenStorageService.RemoveAsync(sessionId, cancellationToken);
+                    continue;
+                }
 
-            if (!tokenRefreshService.ShouldRefresh(tokenResponse, now))
+                if (!tokenRefreshService.ShouldRefresh(tokenResponse, now))
+                {
+                    logger.LogDebug("Token for session {SessionId} does not need refresh.", sessionId);
+                    continue;
+                }
+
+                var refreshedToken = await tokenRefreshService.RefreshAsync(tokenResponse, cancellationToken);
+                if (refreshedToken is null)
+                {
+                    logger.LogWarning("Token refresh failed for session {SessionId}.", sessionId);
+                    continue;
+                }
+
+                await tokenStorageService.StoreAsync(sessionId, refreshedToken, cancellationToken);
+                logger.LogInformation("Refreshed token for session {SessionId}.", sessionId);
+            }
+            catch (Exception ex)
             {
-                continue;
+                logger.LogError(ex, "Token refresh failed for session {SessionId}.", sessionId);
             }
-
-            var refreshedToken = await tokenRefreshService.RefreshAsync(tokenResponse, cancellationToken);
-            if (refreshedToken is null)
-            {
-                logger.LogWarning("Token refresh failed for session {SessionId}.", sessionId);
-                continue;
-            }
-
-            await tokenStorageService.StoreAsync(sessionId, refreshedToken, cancellationToken);
-            logger.LogInformation("Refreshed token for session {SessionId}.", sessionId);
         }
     }
 }

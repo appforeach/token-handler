@@ -12,8 +12,9 @@ builder.Services.AddExpiringTokensRefreshInfrastructure(options =>
     options.ClientId = builder.Configuration.GetValue<string>("Keycloak:ClientId") ?? TokenHandlerOptions.Default.ClientId;
     options.ClientSecret = builder.Configuration.GetValue<string>("Keycloak:ClientSecret") ?? TokenHandlerOptions.Default.ClientSecret;
     options.Realm = builder.Configuration.GetValue<string>("Keycloak:Realm") ?? TokenHandlerOptions.Default.Realm;
-    options.RefreshBeforeExpirationInMinutes = builder.Configuration.GetValue<TimeSpan?>("ExpiringSessionsRefreshWorker:RefreshBeforeExpiration")
+    options.RefreshBeforeExpirationInMinutes = builder.Configuration.GetValue<TimeSpan?>("ExpiringTokensRefreshWorker:RefreshBeforeExpiration")
         ?? TokenHandlerOptions.Default.RefreshBeforeExpirationInMinutes;
+    options.RedisConnectionString = builder.Configuration.GetValue<string>("Redis:ConnectionString") ?? TokenHandlerOptions.Default.RedisConnectionString;
 });
 
 builder.Services.AddHostedService<ExpiringTokensRefreshWorker>();
