@@ -1,5 +1,4 @@
 ﻿using AppForeach.TokenHandler.Services.Expiring_Sessions_Refresh;
-using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Options;
 using Moq;
 
@@ -13,10 +12,9 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromMinutes(1) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
 
         // Act
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
 
         // Assert
         Assert.NotNull(worker);
@@ -28,8 +26,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.Zero });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         // Act & Assert
@@ -44,8 +41,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromSeconds(-1) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         // Act & Assert
@@ -60,8 +56,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromMilliseconds(10) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         mockService
@@ -84,8 +79,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromMilliseconds(10) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         mockService
@@ -108,8 +102,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromMilliseconds(10) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         var callCount = 0;
@@ -141,8 +134,7 @@ public class ExpiringTokensRefreshWorkerTests
         // Arrange
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = TimeSpan.FromMilliseconds(10) });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         CancellationToken? receivedToken = null;
@@ -179,8 +171,7 @@ public class ExpiringTokensRefreshWorkerTests
         var mockService = new Mock<IExpiringTokensRefreshService>();
         var pollingInterval = TimeSpan.FromMilliseconds(50);
         var options = Options.Create(new ExpiringTokensRefreshWorkerOptions { PollingInterval = pollingInterval });
-        var mockLogger = new Mock<ILogger<ExpiringTokensRefreshWorker>>();
-        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options, mockLogger.Object);
+        var worker = new ExpiringTokensRefreshWorker(mockService.Object, options);
         using var cts = new CancellationTokenSource();
 
         var callTimes = new List<DateTimeOffset>();
