@@ -1,19 +1,22 @@
 ﻿using AppForeach.TokenHandler.Controllers;
 using AppForeach.TokenHandler.Middleware;
 using AppForeach.TokenHandler.Services;
+using AppForeach.TokenHandler.Services.Expiring_Sessions_Refresh;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
-using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
 using System.Diagnostics;
 
 namespace AppForeach.TokenHandler.Extensions;
+
 public static class ConfigurationExtensions
 {
     public static string AuthenticationCookieName = "session-id";
+    public const string TokenExchangeHttpClientName = "TokenExchange";
 
     public static IServiceCollection AddTokenExchangeDelegatingHandler(this IServiceCollection services)
     {
@@ -22,14 +25,12 @@ public static class ConfigurationExtensions
         services.AddHttpContextAccessor();
         return services;
     }
-    public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions> overrideOptions)
+
+    public static IServiceCollection AddExpiringTokensRefreshInfrastructure(this IServiceCollection services, Action<TokenHandlerOptions>? overrideOptions)
     {
         var tokenHandlerOptions = TokenHandlerOptions.Default;
 
-        if (overrideOptions is not null)
-        {
-            overrideOptions(tokenHandlerOptions);
-        }
+        overrideOptions?.Invoke(tokenHandlerOptions);
 
         services.Configure<TokenHandlerOptions>(options =>
         {
@@ -37,15 +38,45 @@ public static class ConfigurationExtensions
             options.ClientId = tokenHandlerOptions.ClientId;
             options.ClientSecret = tokenHandlerOptions.ClientSecret;
             options.Realm = tokenHandlerOptions.Realm;
+            options.RefreshBeforeExpirationInMinutes = tokenHandlerOptions.RefreshBeforeExpirationInMinutes;
         });
 
         services.AddMemoryCache();
-        services.AddDistributedMemoryCache(); // For development. In production, use Redis or SQL Server
-        services.AddHybridCache();
-        services.AddHttpContextAccessor();
 
-        // Register HTTP client for token exchange
-        services.AddHttpClient("TokenExchange");
+        //services.AddDistributedMemoryCache(); // For development/testing, replace with Redis in production
+
+        // Configure Redis as distributed cache
+        services.AddStackExchangeRedisCache(options =>
+        {
+            options.Configuration = tokenHandlerOptions.RedisConnectionString ?? "localhost:6379";
+            options.InstanceName = "TokenHandler_";
+        });
+
+        services.AddHybridCache();
+        services.AddHttpClient(TokenExchangeHttpClientName);
+        services.TryAddSingleton<ITokenStorageService, TokenStorageService>();
+        services.TryAddSingleton<ITokenRefreshService, TokenRefreshService>();
+        services.TryAddSingleton<IExpiringTokensRefreshService, ExpiringTokensRefreshService>();
+
+        return services;
+    }
+
+    public static IServiceCollection AddTokenHandler(this IServiceCollection services, Action<TokenHandlerOptions>? overrideOptions)
+    {
+        var tokenHandlerOptions = TokenHandlerOptions.Default;
+        overrideOptions?.Invoke(tokenHandlerOptions);
+
+        services.AddExpiringTokensRefreshInfrastructure(options =>
+        {
+            options.Authority = tokenHandlerOptions.Authority;
+            options.ClientId = tokenHandlerOptions.ClientId;
+            options.ClientSecret = tokenHandlerOptions.ClientSecret;
+            options.Realm = tokenHandlerOptions.Realm;
+            options.RefreshBeforeExpirationInMinutes = tokenHandlerOptions.RefreshBeforeExpirationInMinutes;
+            options.RedisConnectionString = tokenHandlerOptions.RedisConnectionString;
+        });
+
+        services.AddHttpContextAccessor();
 
         // Register token exchange service
         services.AddTransient<ITokenExchangeService, TokenExchangeService>();
@@ -100,14 +131,14 @@ public static class ConfigurationExtensions
                },
                OnTokenValidated = async context =>
                {
-                   var hybridCache = context.HttpContext.RequestServices.GetRequiredService<HybridCache>();
+                   var tokensStorage = context.HttpContext.RequestServices.GetRequiredService<ITokenStorageService>();
                    Debug.WriteLine($"Authenticated user: {context.Principal?.Identity?.Name}");
 
                    if (context.TokenEndpointResponse is null)
                        return;
 
                    var sessionId = Guid.NewGuid().ToString();
-                   await hybridCache.SetAsync(sessionId, context.TokenEndpointResponse);
+                   await tokensStorage.StoreAsync(sessionId, context.TokenEndpointResponse);
 
                    var httpContext = context.HttpContext;
                    httpContext.Response.Cookies.Append(AuthenticationCookieName, sessionId, new CookieOptions
@@ -118,8 +149,10 @@ public static class ConfigurationExtensions
                        // Expires = DateTimeOffset.UtcNow.AddHours(1)
                    });
 
-
-                   context.Properties.RedirectUri = context.ProtocolMessage.RedirectUri ?? "http://localhost:3000";
+                   if (context.Properties is not null)
+                   {
+                       context.Properties.RedirectUri = context.ProtocolMessage.RedirectUri ?? "http://localhost:3000";
+                   }
 
                    await Task.CompletedTask;
                },

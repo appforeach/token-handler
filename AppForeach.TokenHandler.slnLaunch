@@ -17,6 +17,10 @@
       {
         "Path": "samples\\Poc.BackgroundWorker\\Poc.BackgroundWorker.csproj",
         "Action": "Start"
+      },
+      {
+        "Path": "src\\AppForeach.TokenHandler.BackgroundWorker\\AppForeach.TokenHandler.BackgroundWorker.csproj",
+        "Action": "Start"
       }
     ]
   }

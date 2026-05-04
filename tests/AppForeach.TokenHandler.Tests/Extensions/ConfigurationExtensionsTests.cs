@@ -1,10 +1,6 @@
-﻿using AppForeach.TokenHandler.Controllers;
-using AppForeach.TokenHandler.Extensions;
-using AppForeach.TokenHandler.Middleware;
+﻿using AppForeach.TokenHandler.Extensions;
 using AppForeach.TokenHandler.Services;
 using Microsoft.AspNetCore.Authentication;
-using Microsoft.AspNetCore.Authentication.Cookies;
-using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.Caching.Hybrid;
@@ -144,6 +140,18 @@ public class ConfigurationExtensionsTests
     }
 
     [Fact]
+    public void AddTokenHandler_RegistersTokenRefreshServices()
+    {
+        var services = new ServiceCollection();
+
+        services.AddTokenHandler(options => { });
+
+        var serviceProvider = services.BuildServiceProvider();
+        Assert.NotNull(serviceProvider.GetService<ITokenStorageService>());
+        Assert.NotNull(serviceProvider.GetService<ITokenRefreshService>());
+    }
+
+    [Fact]
     public void AddTokenHandler_RegistersTokenExchangeDelegatingHandler()
     {
         // Arrange
@@ -255,5 +263,21 @@ public class ConfigurationExtensionsTests
 
         // Assert
         Assert.Contains(services, s => s.ServiceType == typeof(Microsoft.Extensions.Caching.Distributed.IDistributedCache));
+    }
+
+    [Fact]
+    public void AddExpiringTokensRefreshInfrastructure_ConfiguresRefreshThreshold()
+    {
+        var services = new ServiceCollection();
+
+        services.AddExpiringTokensRefreshInfrastructure(options =>
+        {
+            options.RefreshBeforeExpirationInMinutes = TimeSpan.FromMinutes(2);
+        });
+
+        var serviceProvider = services.BuildServiceProvider();
+        var configuredOptions = serviceProvider.GetRequiredService<IOptions<TokenHandlerOptions>>().Value;
+
+        Assert.Equal(TimeSpan.FromMinutes(2), configuredOptions.RefreshBeforeExpirationInMinutes);
     }
 }

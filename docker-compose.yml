@@ -18,6 +18,22 @@ services:
     networks:
       - poc-network
 
+  redis:
+    image: redis:7-alpine
+    command: redis-server --appendonly yes
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis_data:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+      start_period: 5s
+    networks:
+      - poc-network
+
   keycloak:
     image: quay.io/keycloak/keycloak:latest
     command: 
@@ -60,8 +76,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Keycloak__Authority=http://keycloak:8080/realms/poc
       - Keycloak__Audience=api
+      - Redis__ConnectionString=redis:6379
     depends_on:
       keycloak:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - poc-network
@@ -76,8 +95,11 @@ services:
       - ASPNETCORE_ENVIRONMENT=Development
       - Keycloak__Authority=http://keycloak:8080/realms/poc
       - Keycloak__Audience=internalapi
+      - Redis__ConnectionString=redis:6379
     depends_on:
       keycloak:
+        condition: service_healthy
+      redis:
         condition: service_healthy
     networks:
       - poc-network
@@ -95,11 +117,14 @@ services:
       - Keycloak__Audience=account
       - FrontEnd__RedirectAfterLogin=http://frontend:3000
       - ReverseProxy__Clusters__apiCluster__Destinations__destination1__Address=http://api:8080
+      - Redis__ConnectionString=redis:6379
     depends_on:
       keycloak:
         condition: service_healthy
       api:
         condition: service_started
+      redis:
+        condition: service_healthy
     networks:
       - poc-network
 
@@ -116,6 +141,7 @@ services:
 
 volumes:
   postgres_data:
+  redis_data:
 
 networks:
   poc-network:
