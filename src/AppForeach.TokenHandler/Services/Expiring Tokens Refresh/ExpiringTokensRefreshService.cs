@@ -21,7 +21,7 @@ internal class ExpiringTokensRefreshService(
                 var tokenResponse = await tokenStorageService.GetAsync(sessionId, cancellationToken);
                 if (tokenResponse is null)
                 {
-                    //do we need to remomve sessionId from index if tokenResponse is null? probably yes, to avoid trying to refresh every time.
+                    //do we need to remove sessionId from index if tokenResponse is null? probably yes, to avoid trying to refresh every time.
                     await tokenStorageService.RemoveAsync(sessionId, cancellationToken);
                     continue;
                 }
