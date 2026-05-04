@@ -1,5 +1,4 @@
 using AppForeach.TokenHandler.Services;
-using Microsoft.Extensions.Caching.Distributed;
 using Microsoft.Extensions.Caching.Hybrid;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 
@@ -11,8 +10,8 @@ public class TokenStorageServiceTests
     public async Task StoreAsync_AddsSessionToCacheAndIndex()
     {
         var cache = new TestHybridCache();
-        var distributedCache = new TestDistributedCache();
-        var store = new TokenStorageService(cache, distributedCache);
+        var indexStore = new InMemorySessionIndexStore();
+        var store = new TokenStorageService(cache, indexStore);
         var tokenResponse = new OpenIdConnectMessage
         {
             AccessToken = "access-token",
@@ -33,8 +32,8 @@ public class TokenStorageServiceTests
     public async Task RemoveAsync_RemovesSessionFromCacheAndIndex()
     {
         var cache = new TestHybridCache();
-        var distributedCache = new TestDistributedCache();
-        var store = new TokenStorageService(cache, distributedCache);
+        var indexStore = new InMemorySessionIndexStore();
+        var store = new TokenStorageService(cache, indexStore);
         await store.StoreAsync("session-1", new OpenIdConnectMessage { AccessToken = "access-token" });
 
         await store.RemoveAsync("session-1");
@@ -46,37 +45,24 @@ public class TokenStorageServiceTests
         Assert.DoesNotContain("session-1", sessionIds);
     }
 
-    private sealed class TestDistributedCache : IDistributedCache
+    private sealed class InMemorySessionIndexStore : ISessionIndexStore
     {
-        private readonly Dictionary<string, byte[]> _values = new(StringComparer.Ordinal);
+        private readonly HashSet<string> _sessionIds = new(StringComparer.Ordinal);
 
-        public byte[]? Get(string key) => _values.TryGetValue(key, out var value) ? value : null;
-
-        public Task<byte[]?> GetAsync(string key, CancellationToken token = default) =>
-            Task.FromResult(Get(key));
-
-        public void Refresh(string key)
+        public Task AddAsync(string sessionId, CancellationToken cancellationToken = default)
         {
-        }
-
-        public Task RefreshAsync(string key, CancellationToken token = default) => Task.CompletedTask;
-
-        public void Remove(string key) => _values.Remove(key);
-
-        public Task RemoveAsync(string key, CancellationToken token = default)
-        {
-            Remove(key);
+            _sessionIds.Add(sessionId);
             return Task.CompletedTask;
         }
 
-        public void Set(string key, byte[] value, DistributedCacheEntryOptions options) =>
-            _values[key] = value;
-
-        public Task SetAsync(string key, byte[] value, DistributedCacheEntryOptions options, CancellationToken token = default)
+        public Task RemoveAsync(string sessionId, CancellationToken cancellationToken = default)
         {
-            Set(key, value, options);
+            _sessionIds.Remove(sessionId);
             return Task.CompletedTask;
         }
+
+        public Task<IReadOnlyCollection<string>> GetAllAsync(CancellationToken cancellationToken = default) =>
+            Task.FromResult<IReadOnlyCollection<string>>(_sessionIds.ToHashSet(StringComparer.Ordinal));
     }
 
     private sealed class TestHybridCache : HybridCache

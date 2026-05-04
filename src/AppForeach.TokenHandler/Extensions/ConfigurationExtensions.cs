@@ -9,6 +9,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.DependencyInjection.Extensions;
 using Microsoft.IdentityModel.Protocols.OpenIdConnect;
 using Microsoft.IdentityModel.Tokens;
+using StackExchange.Redis;
 using System.Diagnostics;
 
 namespace AppForeach.TokenHandler.Extensions;
@@ -43,12 +44,21 @@ public static class ConfigurationExtensions
 
         services.AddMemoryCache();
 
-        //services.AddDistributedMemoryCache(); // For development/testing, replace with Redis in production
+        var redisConnectionString = tokenHandlerOptions.RedisConnectionString ?? "localhost:6379";
 
-        // Configure Redis as distributed cache
+        // Register a shared IConnectionMultiplexer for atomic session-index operations (SADD/SREM/SMEMBERS).
+        services.TryAddSingleton<IConnectionMultiplexer>(_ =>
+        {
+            var configOptions = ConfigurationOptions.Parse(redisConnectionString);
+            configOptions.AbortOnConnectFail = false;
+            return ConnectionMultiplexer.Connect(configOptions);
+        });
+        services.TryAddSingleton<ISessionIndexStore, RedisSessionIndexStore>();
+
+        // Configure Redis as distributed cache for HybridCache L2 backing.
         services.AddStackExchangeRedisCache(options =>
         {
-            options.Configuration = tokenHandlerOptions.RedisConnectionString ?? "localhost:6379";
+            options.Configuration = redisConnectionString;
             options.InstanceName = "TokenHandler_";
         });
 
