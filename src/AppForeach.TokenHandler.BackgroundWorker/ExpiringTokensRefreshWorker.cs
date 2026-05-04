@@ -9,7 +9,7 @@ public class ExpiringTokensRefreshWorker(
 {
     protected override async Task ExecuteAsync(CancellationToken stoppingToken)
     {
-        if (options.Value.PollingInterval <= TimeSpan.Zero)
+        if (options.Value.PollingIntervalInMinutes <= TimeSpan.Zero)
         {
             throw new InvalidOperationException($"{nameof(ExpiringTokensRefreshWorker)}:PollingInterval must be greater than zero.");
         }
@@ -17,7 +17,7 @@ public class ExpiringTokensRefreshWorker(
         while (!stoppingToken.IsCancellationRequested)
         {
             await expiringSessionsRefreshService.HandleAsync(stoppingToken);
-            await Task.Delay(options.Value.PollingInterval, stoppingToken);
+            await Task.Delay(options.Value.PollingIntervalInMinutes, stoppingToken);
         }
     }
 }
